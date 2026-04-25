@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Type Chart - Interactive damage calculator from pokepc/dataset.">
+    <title>PokéHelp • Type Chart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+        :root { --primary-blue: #00A3FF; }
+        body { font-family: 'Inter', system_ui, sans-serif; }
+        .logo-font { font-family: 'Space Grotesk', sans-serif; letter-spacing: -2px; }
+        .type-cell { transition: all 0.2s ease; }
+    </style>
+</head>
+<body class="bg-[#0F172A] text-slate-100">
+
+    <!-- NAVBAR -->
+    <nav class="bg-[#0F172A] border-b border-slate-800 sticky top-0 z-50 backdrop-blur-lg">
+        <div class="max-w-7xl mx-auto px-6 py-5">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-[#00A3FF] rounded-2xl flex items-center justify-center shadow-inner">
+                        <div class="text-white text-2xl">⚡</div>
+                    </div>
+                    <h1 onclick="window.location.href='index.html'" class="logo-font text-4xl tracking-[-2px] text-white cursor-pointer">PokéHelp</h1>
+                </div>
+
+                <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+                    <a href="index.html" class="flex items-center gap-1.5 hover:text-[#00A3FF]"><i class="fas fa-home"></i><span>Home</span></a>
+                    <a href="pokedex.html" class="flex items-center gap-1.5 hover:text-[#00A3FF]"><i class="fas fa-book"></i><span>Pokédex</span></a>
+                    <a href="moves.html" class="flex items-center gap-1.5 hover:text-[#00A3FF]"><i class="fas fa-bolt"></i><span>Moves</span></a>
+                    <a href="abilities.html" class="flex items-center gap-1.5 hover:text-[#00A3FF]"><i class="fas fa-shield-alt"></i><span>Abilities</span></a>
+                    <a href="items.html" class="flex items-center gap-1.5 hover:text-[#00A3FF]"><i class="fas fa-gem"></i><span>Items</span></a>
+                    <a href="typechart.html" class="flex items-center gap-1.5 text-[#00A3FF] border-b-2 border-[#00A3FF] pb-1"><i class="fas fa-circle"></i><span>Type Chart</span></a>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleMobileMenu()" class="md:hidden w-11 h-11 flex items-center justify-center text-2xl text-slate-400 hover:text-white rounded-2xl border border-slate-700"><i class="fas fa-bars"></i></button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="bg-gradient-to-br from-[#0F172A] to-[#1E2937] py-12 border-b border-slate-700">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <h1 class="text-5xl font-semibold tracking-tighter logo-font">Type Chart</h1>
+            <p class="text-slate-400 mt-2">Interactive damage multiplier chart • Gen 9</p>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 py-10">
+        <div class="overflow-x-auto">
+            <table id="type-chart" class="min-w-full border-collapse text-sm"></table>
+        </div>
+    </main>
+
+    <script>
+        const types = ["Normal","Fire","Water","Grass","Electric","Ice","Fighting","Poison","Ground","Flying","Psychic","Bug","Rock","Ghost","Dragon","Dark","Steel","Fairy"];
+
+        const effectiveness = {
+            Normal:   {Normal:1,Fire:1,Water:1,Grass:1,Electric:1,Ice:1,Fighting:1,Poison:1,Ground:1,Flying:1,Psychic:1,Bug:1,Rock:0.5,Ghost:0,Dragon:1,Dark:1,Steel:0.5,Fairy:1},
+            Fire:     {Normal:1,Fire:0.5,Water:0.5,Grass:2,Electric:1,Ice:2,Fighting:1,Poison:1,Ground:1,Flying:1,Psychic:1,Bug:2,Rock:0.5,Ghost:1,Dragon:0.5,Dark:1,Steel:2,Fairy:1},
+            Water:    {Normal:1,Fire:2,Water:0.5,Grass:0.5,Electric:1,Ice:1,Fighting:1,Poison:1,Ground:2,Flying:1,Psychic:1,Bug:1,Rock:2,Ghost:1,Dragon:0.5,Dark:1,Steel:1,Fairy:1},
+            Grass:    {Normal:1,Fire:0.5,Water:2,Grass:0.5,Electric:1,Ice:1,Fighting:1,Poison:0.5,Ground:2,Flying:0.5,Psychic:1,Bug:0.5,Rock:2,Ghost:1,Dragon:0.5,Dark:1,Steel:0.5,Fairy:1},
+            Electric: {Normal:1,Fire:1,Water:2,Grass:0.5,Electric:0.5,Ice:1,Fighting:1,Poison:1,Ground:0,Flying:2,Psychic:1,Bug:1,Rock:1,Ghost:1,Dragon:0.5,Dark:1,Steel:1,Fairy:1},
+            Ice:      {Normal:1,Fire:0.5,Water:0.5,Grass:2,Electric:1,Ice:0.5,Fighting:1,Poison:1,Ground:2,Flying:2,Psychic:1,Bug:1,Rock:1,Ghost:1,Dragon:2,Dark:1,Steel:0.5,Fairy:1},
+            Fighting: {Normal:2,Fire:1,Water:1,Grass:1,Electric:1,Ice:2,Fighting:1,Poison:0.5,Ground:1,Flying:0.5,Psychic:0.5,Bug:0.5,Rock:2,Ghost:0,Dragon:1,Dark:2,Steel:2,Fairy:0.5},
+            Poison:   {Normal:1,Fire:1,Water:1,Grass:2,Electric:1,Ice:1,Fighting:1,Poison:0.5,Ground:0.5,Flying:1,Psychic:1,Bug:1,Rock:0.5,Ghost:0.5,Dragon:1,Dark:1,Steel:0,Fairy:2},
+            Ground:   {Normal:1,Fire:2,Water:1,Grass:0.5,Electric:2,Ice:1,Fighting:1,Poison:2,Ground:1,Flying:0,Psychic:1,Bug:0.5,Rock:2,Ghost:1,Dragon:1,Dark:1,Steel:2,Fairy:1},
+            Flying:   {Normal:1,Fire:1,Water:1,Grass:2,Electric:0.5,Ice:1,Fighting:2,Poison:1,Ground:1,Flying:1,Psychic:1,Bug:2,Rock:0.5,Ghost:1,Dragon:1,Dark:1,Steel:0.5,Fairy:1},
+            Psychic:  {Normal:1,Fire:1,Water:1,Grass:1,Electric:1,Ice:1,Fighting:2,Poison:2,Ground:1,Flying:1,Psychic:0.5,Bug:1,Rock:1,Ghost:1,Dragon:1,Dark:0,Steel:0.5,Fairy:1},
+            Bug:      {Normal:1,Fire:0.5,Water:1,Grass:2,Electric:1,Ice:1,Fighting:0.5,Poison:0.5,Ground:1,Flying:0.5,Psychic:2,Bug:1,Rock:1,Ghost:0.5,Dragon:1,Dark:2,Steel:0.5,Fairy:0.5},
+            Rock:     {Normal:1,Fire:2,Water:1,Grass:1,Electric:1,Ice:2,Fighting:0.5,Poison:1,Ground:0.5,Flying:2,Psychic:1,Bug:2,Rock:1,Ghost:1,Dragon:1,Dark:1,Steel:0.5,Fairy:1},
+            Ghost:    {Normal:0,Fire:1,Water:1,Grass:1,Electric:1,Ice:1,Fighting:1,Poison:1,Ground:1,Flying:1,Psychic:2,Bug:1,Rock:1,Ghost:2,Dragon:1,Dark:0.5,Steel:1,Fairy:1},
+            Dragon:   {Normal:1,Fire:1,Water:1,Grass:1,Electric:1,Ice:1,Fighting:1,Poison:1,Ground:1,Flying:1,Psychic:1,Bug:1,Rock:1,Ghost:1,Dragon:2,Dark:1,Steel:0.5,Fairy:0},
+            Dark:     {Normal:1,Fire:1,Water:1,Grass:1,Electric:1,Ice:1,Fighting:0.5,Poison:1,Ground:1,Flying:1,Psychic:2,Bug:1,Rock:1,Ghost:2,Dragon:1,Dark:0.5,Steel:1,Fairy:0.5},
+            Steel:    {Normal:1,Fire:0.5,Water:0.5,Grass:1,Electric:1,Ice:2,Fighting:1,Poison:1,Ground:1,Flying:1,Psychic:1,Bug:1,Rock:2,Ghost:1,Dragon:1,Dark:1,Steel:0.5,Fairy:2},
+            Fairy:    {Normal:1,Fire:0.5,Water:1,Grass:1,Electric:1,Ice:1,Fighting:2,Poison:0.5,Ground:1,Flying:1,Psychic:1,Bug:1,Rock:1,Ghost:1,Dragon:2,Dark:2,Steel:0.5,Fairy:1}
+        };
+
+        function buildTypeChart() {
+            const table = document.getElementById('type-chart');
+            let html = `<thead><tr><th class="p-2"></th>`;
+            types.forEach(t => {
+                html += `<th class="p-2 text-center font-medium" style="background-color: ${typeColors[t.toLowerCase()] || '#777'}">${t}</th>`;
+            });
+            html += `</tr></thead><tbody>`;
+
+            types.forEach(attacker => {
+                html += `<tr><td class="p-2 font-medium" style="background-color: ${typeColors[attacker.toLowerCase()] || '#777'}">${attacker}</td>`;
+                types.forEach(defender => {
+                    const mult = effectiveness[attacker][defender];
+                    let color = '';
+                    if (mult === 2) color = 'bg-green-500 text-white';
+                    else if (mult === 0.5) color = 'bg-red-500 text-white';
+                    else if (mult === 0) color = 'bg-gray-700 text-white';
+                    else color = 'bg-slate-800';
+                    html += `<td class="type-cell p-3 text-center font-semibold ${color}">${mult}</td>`;
+                });
+                html += `</tr>`;
+            });
+            html += `</tbody>`;
+            table.innerHTML = html;
+        }
+
+        const typeColors = { normal: '#A8A878', fire: '#F08030', water: '#6890F0', grass: '#78C850', electric: '#F8D030', ice: '#98D8D8', fighting: '#C03028', poison: '#A040A0', ground: '#E0C068', flying: '#A890F0', psychic: '#F85888', bug: '#A8B820', rock: '#B8A038', ghost: '#705898', dragon: '#7038F8', dark: '#705848', steel: '#B8B8D0', fairy: '#EE99AC' };
+
+        window.onload = buildTypeChart;
+    </script>
+</body>
+</html>
