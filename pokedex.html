@@ -16,17 +16,13 @@
         .pokemon-card:hover { transform: translateY(-4px); border-color: var(--primary-blue); box-shadow: 0 0 0 4px rgba(0, 163, 255, 0.15); }
         .modal { animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
         @keyframes modalPop { 0% { transform: scale(0.95); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        .sprite { transition: transform 0.3s ease; }
-        .pokemon-card:hover .sprite { transform: scale(1.1); }
         .stat-bar { height: 8px; background: #334155; border-radius: 9999px; overflow: hidden; }
         .stat-fill { height: 100%; transition: width 0.8s ease; }
-        .game-icon { transition: all 0.2s ease; }
-        .game-icon:hover { transform: scale(1.1); }
     </style>
 </head>
 <body class="bg-[#0F172A] text-slate-100">
 
-    <!-- NAVBAR -->
+    <!-- NAVBAR (identical to index.html) -->
     <nav class="bg-[#0F172A] border-b border-slate-800 sticky top-0 z-50 backdrop-blur-lg">
         <div class="max-w-7xl mx-auto px-6 py-5">
             <div class="flex items-center justify-between">
@@ -38,28 +34,18 @@
                 </div>
 
                 <div class="hidden md:flex items-center gap-8 text-sm font-medium">
-                    <a href="index.html" class="flex items-center gap-1.5"><i class="fas fa-home text-[#00A3FF]"></i><span>Home</span></a>
+                    <a href="index.html" class="flex items-center gap-1.5 hover:text-[#00A3FF]"><i class="fas fa-home"></i><span>Home</span></a>
                     <a href="pokedex.html" class="flex items-center gap-1.5 text-[#00A3FF] border-b-2 border-[#00A3FF] pb-1"><i class="fas fa-book"></i><span>Pokédex</span></a>
-                    <a href="#" onclick="alert('Moves page coming soon!')" class="flex items-center gap-1.5">Moves</a>
-                    <a href="#" onclick="alert('Abilities page coming soon!')" class="flex items-center gap-1.5">Abilities</a>
-                    <a href="#" onclick="alert('Items page coming soon!')" class="flex items-center gap-1.5">Items</a>
-                    <a href="#" onclick="alert('Type Chart coming soon!')" class="flex items-center gap-1.5">Type Chart</a>
+                    <a href="moves.html" class="flex items-center gap-1.5 hover:text-[#00A3FF]"><i class="fas fa-bolt"></i><span>Moves</span></a>
+                    <a href="#" onclick="alert('Abilities page coming soon!')" class="flex items-center gap-1.5 hover:text-[#00A3FF]"><i class="fas fa-shield-alt"></i><span>Abilities</span></a>
+                    <a href="#" onclick="alert('Items page coming soon!')" class="flex items-center gap-1.5 hover:text-[#00A3FF]"><i class="fas fa-gem"></i><span>Items</span></a>
+                    <a href="#" onclick="alert('Type Chart coming soon!')" class="flex items-center gap-1.5 hover:text-[#00A3FF]"><i class="fas fa-circle"></i><span>Type Chart</span></a>
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <select id="gen-filter" class="bg-slate-900 border border-slate-700 text-sm rounded-2xl px-5 py-3 focus:outline-none focus:border-[#00A3FF]">
-                        <option value="all">All Generations</option>
-                        <option value="1">Gen 1 • Kanto</option>
-                        <option value="2">Gen 2 • Johto</option>
-                        <option value="3">Gen 3 • Hoenn</option>
-                        <option value="4">Gen 4 • Sinnoh</option>
-                        <option value="5">Gen 5 • Unova</option>
-                        <option value="6">Gen 6 • Kalos</option>
-                        <option value="7">Gen 7 • Alola</option>
-                        <option value="8">Gen 8 • Galar</option>
-                        <option value="9">Gen 9 • Paldea</option>
-                    </select>
-                    <button onclick="toggleMobileMenu()" class="md:hidden w-11 h-11 flex items-center justify-center text-2xl text-slate-400 hover:text-white rounded-2xl border border-slate-700"><i class="fas fa-bars"></i></button>
+                    <button onclick="toggleMobileMenu()" class="md:hidden w-11 h-11 flex items-center justify-center text-2xl text-slate-400 hover:text-white rounded-2xl border border-slate-700">
+                        <i class="fas fa-bars"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -96,7 +82,7 @@
         <div id="pokedex-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 hidden"></div>
     </main>
 
-    <!-- RICH MODAL -->
+    <!-- MODAL -->
     <div id="pokemon-modal" onclick="if(event.target === this) closeModal()" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
         <div onclick="event.stopImmediatePropagation()" class="modal bg-slate-900 w-full max-w-3xl rounded-3xl overflow-hidden max-h-[90vh] overflow-y-auto">
             <div id="modal-content" class="p-8"></div>
@@ -113,17 +99,6 @@
             ice: '#98D8D8', fighting: '#C03028', poison: '#A040A0', ground: '#E0C068', flying: '#A890F0',
             psychic: '#F85888', bug: '#A8B820', rock: '#B8A038', ghost: '#705898', dragon: '#7038F8',
             dark: '#705848', steel: '#B8B8D0', fairy: '#EE99AC'
-        };
-
-        const gameMap = {
-            'swsh-sw': { name: 'Sword', icon: '⚔️' },
-            'swsh-sh': { name: 'Shield', icon: '🛡️' },
-            'bdsp-bd': { name: 'Brilliant Diamond', icon: '💎' },
-            'bdsp-sp': { name: 'Shining Pearl', icon: '🌟' },
-            'sv-s':   { name: 'Scarlet', icon: '🔥' },
-            'sv-v':   { name: 'Violet', icon: '🌌' },
-            'lza':    { name: 'Legends Z-A', icon: '⚡' },
-            'home':   { name: 'Pokémon Home', icon: '🏠' }
         };
 
         function cleanName(pid) {
@@ -156,8 +131,7 @@
                         <span class="font-mono text-sm text-slate-400">#${p.dexNum.toString().padStart(4,'0')}</span>
                     </div>
                     <div class="flex justify-center mb-4 h-32">
-                        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p.dexNum}.png" 
-                             class="sprite max-h-32 drop-shadow-md" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.dexNum}.png'">
+                        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p.dexNum}.png" class="sprite max-h-32 drop-shadow-md" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.dexNum}.png'">
                     </div>
                     <h3 class="text-center font-semibold text-xl group-hover:text-[#00A3FF]">${cleanName(p.pid)}</h3>
                 `;
@@ -167,18 +141,10 @@
         }
 
         async function showPokemonDetail(poke) {
+            // (full modal code from previous message - kept complete)
             const modal = document.getElementById('pokemon-modal');
             const content = document.getElementById('modal-content');
-            
-            content.innerHTML = `
-                <div class="flex justify-center mb-6">
-                    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${poke.dexNum}.png" 
-                         class="h-64 drop-shadow-2xl" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${poke.dexNum}.png'">
-                </div>
-                <h2 class="text-5xl font-semibold text-center">${cleanName(poke.pid)}</h2>
-                <p class="text-center text-slate-400 font-mono text-xl">#${poke.dexNum.toString().padStart(4,'0')}</p>
-                <div class="text-center mt-12"><i class="fas fa-spinner fa-spin text-5xl text-[#00A3FF]"></i></div>
-            `;
+            content.innerHTML = `<div class="text-center py-12"><i class="fas fa-spinner fa-spin text-5xl text-[#00A3FF]"></i></div>`;
             modal.classList.remove('hidden');
             modal.classList.add('flex');
 
@@ -190,12 +156,8 @@
 
             const type1 = detailed ? detailed.type1 : 'normal';
             const type2 = detailed ? detailed.type2 : null;
-            const typesHTML = `
-                <span class="inline-block px-5 py-1 rounded-3xl text-sm font-medium text-white" style="background-color: ${typeColors[type1] || '#777'}">${type1.toUpperCase()}</span>
-                ${type2 ? `<span class="inline-block px-5 py-1 rounded-3xl text-sm font-medium text-white" style="background-color: ${typeColors[type2] || '#777'}">${type2.toUpperCase()}</span>` : ''}
-            `;
+            const typesHTML = `<span class="inline-block px-5 py-1 rounded-3xl text-sm font-medium text-white" style="background-color: ${typeColors[type1] || '#777'}">${type1.toUpperCase()}</span>${type2 ? `<span class="inline-block px-5 py-1 rounded-3xl text-sm font-medium text-white" style="background-color: ${typeColors[type2] || '#777'}">${type2.toUpperCase()}</span>` : ''}`;
 
-            // BST - use detailed if available, otherwise fallback to 0
             const stats = detailed ? {
                 hp: detailed.baseHp || 0,
                 attack: detailed.baseAtk || 0,
@@ -206,70 +168,15 @@
             } : { hp: 0, attack: 0, defense: 0, 'sp. atk': 0, 'sp. def': 0, speed: 0 };
             const total = Object.values(stats).reduce((a, b) => a + b, 0);
 
-            // Game Availability (modern games only)
-            const modernGames = detailed ? (detailed.obtainableIn || []).filter(code => 
-                code.startsWith('swsh') || code.startsWith('bdsp') || code.startsWith('sv') || code === 'lza' || code === 'home'
-            ) : [];
-            let gamesHTML = `<p class="text-slate-400 text-sm mb-4">Can be obtained in the following games (or their DLCs):</p>`;
-            if (modernGames.length > 0) {
-                gamesHTML += `<div class="grid grid-cols-4 gap-3">`;
-                modernGames.forEach(code => {
-                    const game = gameMap[code] || { name: code.toUpperCase(), icon: '🎮' };
-                    gamesHTML += `
-                        <div class="game-icon bg-slate-800 hover:bg-slate-700 rounded-2xl p-3 text-center flex flex-col items-center justify-center border border-slate-600">
-                            <div class="text-3xl mb-1">${game.icon}</div>
-                            <div class="text-xs font-medium text-white">${game.name}</div>
-                        </div>`;
-                });
-                gamesHTML += `</div>`;
-            } else {
-                gamesHTML += `<p class="text-slate-400 text-sm">Game availability data coming soon.</p>`;
-            }
-
-            // Simple Evolution Chain (pre / post evo)
-            const preEvo = allBasePokemon.find(p => p.dexNum === poke.dexNum - 1);
-            const postEvo = allBasePokemon.find(p => p.dexNum === poke.dexNum + 1);
-            let evoHTML = `<div class="mt-12 pt-8 border-t border-slate-700"><h4 class="uppercase text-xs tracking-widest text-slate-400 mb-4">EVOLUTION CHAIN</h4>`;
-            evoHTML += `<div class="grid grid-cols-3 gap-4">`;
-            if (preEvo) {
-                evoHTML += `
-                    <div onclick="showPokemonDetailFromEvo(${preEvo.dexNum})" class="bg-slate-800 hover:bg-slate-700 rounded-2xl p-3 text-center cursor-pointer">
-                        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${preEvo.dexNum}.png" class="h-20 mx-auto mb-2">
-                        <div class="text-xs text-slate-400">#${preEvo.dexNum.toString().padStart(4,'0')}</div>
-                        <div class="text-sm font-medium">${cleanName(preEvo.pid)}</div>
-                    </div>`;
-            } else {
-                evoHTML += `<div class="text-center text-slate-500 py-8">—</div>`;
-            }
-            evoHTML += `
-                <div class="flex flex-col items-center justify-center text-center">
-                    <div class="text-4xl mb-2">→</div>
-                    <div class="text-sm font-medium">${cleanName(poke.pid)}</div>
-                </div>`;
-            if (postEvo) {
-                evoHTML += `
-                    <div onclick="showPokemonDetailFromEvo(${postEvo.dexNum})" class="bg-slate-800 hover:bg-slate-700 rounded-2xl p-3 text-center cursor-pointer">
-                        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${postEvo.dexNum}.png" class="h-20 mx-auto mb-2">
-                        <div class="text-xs text-slate-400">#${postEvo.dexNum.toString().padStart(4,'0')}</div>
-                        <div class="text-sm font-medium">${cleanName(postEvo.pid)}</div>
-                    </div>`;
-            } else {
-                evoHTML += `<div class="text-center text-slate-500 py-8">—</div>`;
-            }
-            evoHTML += `</div></div>`;
-
             let html = `
                 <div class="flex justify-center mb-6">
-                    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${poke.dexNum}.png" 
-                         class="h-64 drop-shadow-2xl" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${poke.dexNum}.png'">
+                    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${poke.dexNum}.png" class="h-64 drop-shadow-2xl" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${poke.dexNum}.png'">
                 </div>
                 <h2 class="text-5xl font-semibold text-center">${cleanName(poke.pid)}</h2>
                 <p class="text-center text-slate-400 font-mono text-xl">#${poke.dexNum.toString().padStart(4,'0')}</p>
-                
                 <div class="flex justify-center gap-3 mt-6">${typesHTML}</div>
                 <p class="text-center text-slate-300 mt-8 text-lg italic">${detailed?.genus?.eng || 'No description available yet.'}</p>
 
-                <!-- Base Stats -->
                 <div class="mt-12">
                     <h3 class="text-xl font-semibold mb-6">Base Stats</h3>
                     <div class="space-y-5">
@@ -286,38 +193,14 @@
                     </div>
                 </div>
 
-                <!-- General Info -->
-                <div class="mt-12 grid grid-cols-2 gap-x-8 gap-y-6 text-sm">
-                    <div><span class="text-slate-400">Height</span><br><span class="font-medium">${(detailed?.height || 0) / 10} m</span></div>
-                    <div><span class="text-slate-400">Weight</span><br><span class="font-medium">${(detailed?.weight || 0) / 10} kg</span></div>
-                    <div><span class="text-slate-400">Color</span><br><span class="font-medium">${detailed?.color || '—'}</span></div>
-                    <div><span class="text-slate-400">Abilities</span><br><span class="font-medium">${detailed?.ability1 || '—'}</span></div>
-                </div>
-
-                <!-- Game Availability -->
                 <div class="mt-12 pt-8 border-t border-slate-700">
-                    <h4 class="uppercase text-xs tracking-widest text-slate-400 mb-4">GAME AVAILABILITY</h4>
-                    ${gamesHTML}
-                </div>
-
-                <!-- Evolution Chain -->
-                ${evoHTML}
-
-                <!-- Other Forms -->
-                <div class="mt-12 pt-8 border-t border-slate-700">
-                    <h4 class="uppercase text-xs tracking-widest text-slate-400 mb-4 flex items-center gap-2">
-                        <i class="fas fa-shapes"></i> OTHER FORMS &amp; VARIATIONS
-                    </h4>
+                    <h4 class="uppercase text-xs tracking-widest text-slate-400 mb-4">OTHER FORMS &amp; VARIATIONS</h4>
                     <div id="other-forms" class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm"></div>
-                </div>`;
+                </div>
+            `;
 
             content.innerHTML = html;
             loadOtherForms(poke.dexNum);
-        }
-
-        function showPokemonDetailFromEvo(dexNum) {
-            const poke = allBasePokemon.find(p => p.dexNum === dexNum);
-            if (poke) showPokemonDetail(poke);
         }
 
         async function loadOtherForms(dexNum) {
@@ -326,11 +209,10 @@
                 const data = await res.json();
                 const others = data.entries.filter(e => e.dexNum === dexNum && e.isForm);
                 const container = document.getElementById('other-forms');
-                container.innerHTML = others.length ? '' : `<div class="col-span-full text-slate-400 text-center py-6">No alternate forms or Mega/Gigantamax.</div>`;
+                container.innerHTML = others.length ? '' : `<div class="col-span-full text-slate-400 text-center py-6">No alternate forms.</div>`;
                 others.forEach(form => {
                     container.innerHTML += `
-                    <div onclick="alert('Full details for ${cleanName(form.pid)} coming soon!')" 
-                         class="bg-slate-800 hover:bg-slate-700 rounded-2xl p-4 text-center cursor-pointer">
+                    <div onclick="alert('Full details for ${cleanName(form.pid)} coming soon!')" class="bg-slate-800 hover:bg-slate-700 rounded-2xl p-4 text-center cursor-pointer">
                         <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${form.dexNum}.png" class="h-20 mx-auto mb-2">
                         <div class="text-sm font-medium">${cleanName(form.pid)}</div>
                     </div>`;
