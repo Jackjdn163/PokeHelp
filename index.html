@@ -3,131 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="PokéHelp - Your modern Pokémon game companion. Real-time data from pokepc/dataset.">
+    <meta name="description" content="PokéHelp - Your complete Pokémon game helper using official pokepc/dataset data.">
     <title>PokéHelp • Pokémon Game Helper</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
-        
-        :root {
-            --primary-blue: #00A3FF;
-            --deep-blue: #0F172A;
-            --accent-cyan: #22D3EE;
-        }
-        
-        body {
-            font-family: 'Inter', system_ui, sans-serif;
-        }
-        
-        .logo-font {
-            font-family: 'Space Grotesk', sans-serif;
-            letter-spacing: -2px;
-        }
-        
-        .hero-bg {
-            background: radial-gradient(circle at center, #1E2937 0%, #0F172A 70%);
-        }
-        
-        .nav-link {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .nav-link:hover {
-            color: var(--primary-blue);
-            transform: translateY(-1px);
-        }
-        
-        .card {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .card:hover {
-            transform: translateY(-6px);
-            border-color: var(--primary-blue);
-            box-shadow: 0 0 0 4px rgba(0, 163, 255, 0.15);
-        }
-        
-        .modern-button {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .modern-button:hover {
-            box-shadow: 0 10px 15px -3px rgb(0 163 255);
-            transform: translateY(-2px);
-        }
+        :root { --primary-blue: #00A3FF; }
+        body { font-family: 'Inter', system_ui, sans-serif; }
+        .logo-font { font-family: 'Space Grotesk', sans-serif; letter-spacing: -2px; }
+        .hero-bg { background: radial-gradient(circle at center, #1E2937 0%, #0F172A 70%); }
+        .card { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card:hover { transform: translateY(-6px); border-color: var(--primary-blue); box-shadow: 0 0 0 4px rgba(0, 163, 255, 0.15); }
     </style>
 </head>
 <body class="bg-[#0F172A] text-slate-100">
+
     <!-- NAVBAR -->
     <nav class="bg-[#0F172A] border-b border-slate-800 sticky top-0 z-50 backdrop-blur-lg">
         <div class="max-w-7xl mx-auto px-6 py-5">
             <div class="flex items-center justify-between">
-                <!-- Logo -->
                 <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 bg-[#00A3FF] rounded-2xl flex items-center justify-center shadow-inner relative">
+                    <div class="w-9 h-9 bg-[#00A3FF] rounded-2xl flex items-center justify-center shadow-inner">
                         <div class="text-white text-2xl">⚡</div>
                     </div>
-                    <h1 class="logo-font text-4xl tracking-[-2px] text-white">PokéHelp</h1>
+                    <h1 onclick="window.location.href='index.html'" class="logo-font text-4xl tracking-[-2px] text-white cursor-pointer">PokéHelp</h1>
                 </div>
 
-                <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center gap-8 text-sm font-medium">
-                    <a href="index.html" class="nav-link flex items-center gap-1.5">
-                        <i class="fas fa-home text-[#00A3FF]"></i>
-                        <span>Home</span>
-                    </a>
-                    <!-- THIS IS THE LINK YOU WANTED -->
-                    <a href="pokedex.html" class="nav-link flex items-center gap-1.5">
-                        <i class="fas fa-book"></i>
-                        <span>Pokédex</span>
-                    </a>
-                    <a href="#" onclick="alert('Moves page coming soon!')" class="nav-link flex items-center gap-1.5">
-                        <i class="fas fa-bolt"></i>
-                        <span>Moves</span>
-                    </a>
-                    <a href="#" onclick="alert('Abilities page coming soon!')" class="nav-link flex items-center gap-1.5">
-                        <i class="fas fa-shield-alt"></i>
-                        <span>Abilities</span>
-                    </a>
-                    <a href="#" onclick="alert('Items page coming soon!')" class="nav-link flex items-center gap-1.5">
-                        <i class="fas fa-gem"></i>
-                        <span>Items</span>
-                    </a>
-                    <a href="#" onclick="alert('Type Chart coming soon!')" class="nav-link flex items-center gap-1.5">
-                        <i class="fas fa-circle"></i>
-                        <span>Type Chart</span>
-                    </a>
+                    <a href="index.html" class="flex items-center gap-1.5 hover:text-[#00A3FF]"><i class="fas fa-home"></i><span>Home</span></a>
+                    <a href="pokedex.html" class="flex items-center gap-1.5 hover:text-[#00A3FF]"><i class="fas fa-book"></i><span>Pokédex</span></a>
+                    <a href="moves.html" class="flex items-center gap-1.5 hover:text-[#00A3FF]"><i class="fas fa-bolt"></i><span>Moves</span></a>
+                    <a href="#" onclick="alert('Abilities page coming soon!')" class="flex items-center gap-1.5 hover:text-[#00A3FF]"><i class="fas fa-shield-alt"></i><span>Abilities</span></a>
+                    <a href="#" onclick="alert('Items page coming soon!')" class="flex items-center gap-1.5 hover:text-[#00A3FF]"><i class="fas fa-gem"></i><span>Items</span></a>
+                    <a href="#" onclick="alert('Type Chart coming soon!')" class="flex items-center gap-1.5 hover:text-[#00A3FF]"><i class="fas fa-circle"></i><span>Type Chart</span></a>
                 </div>
 
-                <!-- Game Selector -->
                 <div class="flex items-center gap-3">
-                    <select id="game-select" 
-                            class="bg-slate-900 border border-slate-700 hover:border-[#00A3FF] text-sm rounded-2xl px-5 py-3 focus:outline-none focus:border-[#00A3FF] transition-colors cursor-pointer">
-                        <option value="all">All Games</option>
-                        <option value="gen9">Scarlet / Violet (Gen 9)</option>
-                        <option value="gen8">Sword / Shield (Gen 8)</option>
-                        <option value="gen7">Sun / Moon (Gen 7)</option>
-                    </select>
-                    
-                    <button onclick="toggleMobileMenu()" 
-                            class="md:hidden w-11 h-11 flex items-center justify-center text-2xl text-slate-400 hover:text-white rounded-2xl border border-slate-700">
+                    <button onclick="toggleMobileMenu()" class="md:hidden w-11 h-11 flex items-center justify-center text-2xl text-slate-400 hover:text-white rounded-2xl border border-slate-700">
                         <i class="fas fa-bars"></i>
                     </button>
                 </div>
-            </div>
-        </div>
-        
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-[#0F172A] border-t border-slate-800 px-6 py-6">
-            <div class="flex flex-col gap-6 text-base">
-                <a href="index.html" class="flex items-center gap-3 py-2 text-slate-300">🏠 Home</a>
-                <!-- THIS IS THE LINK YOU WANTED -->
-                <a href="pokedex.html" class="flex items-center gap-3 py-2 text-[#00A3FF]">📖 Pokédex</a>
-                <a href="#" onclick="alert('Moves coming soon!')" class="flex items-center gap-3 py-2 text-slate-300">⚡ Moves</a>
-                <a href="#" onclick="alert('Abilities coming soon!')" class="flex items-center gap-3 py-2 text-slate-300">🛡️ Abilities</a>
-                <a href="#" onclick="alert('Items coming soon!')" class="flex items-center gap-3 py-2 text-slate-300">💎 Items</a>
-                <a href="#" onclick="alert('Type Chart coming soon!')" class="flex items-center gap-3 py-2 text-slate-300">🔄 Type Chart</a>
             </div>
         </div>
     </nav>
@@ -150,66 +66,19 @@
                     Clean. Fast. Powered by real data.
                 </p>
                 
-                <!-- Search Bar -->
                 <div class="relative max-w-xl">
                     <div class="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400">
                         <i class="fas fa-search text-xl"></i>
                     </div>
-                    <input 
-                        type="text" 
-                        id="hero-search"
-                        placeholder="Search Pokémon, moves, abilities, items..."
-                        onkeydown="if(event.key === 'Enter') handleSearch()"
-                        class="w-full bg-white/10 backdrop-blur-xl border border-white/10 focus:border-[#00A3FF] text-white placeholder:text-slate-400 pl-14 pr-6 py-6 rounded-3xl text-lg focus:outline-none text-base">
-                    <button onclick="handleSearch()" 
-                            class="modern-button absolute right-2 top-1/2 -translate-y-1/2 bg-[#00A3FF] hover:bg-[#22D3EE] text-slate-950 font-semibold px-10 py-4 rounded-3xl text-base">
-                        Search
-                    </button>
+                    <input type="text" id="hero-search" placeholder="Search Pokémon, moves, abilities, items..." 
+                           class="w-full bg-white/10 backdrop-blur-xl border border-white/10 focus:border-[#00A3FF] text-white placeholder:text-slate-400 pl-14 pr-6 py-6 rounded-3xl text-lg focus:outline-none">
+                    <button onclick="handleSearch()" class="absolute right-2 top-1/2 -translate-y-1/2 bg-[#00A3FF] hover:bg-[#22D3EE] text-slate-950 font-semibold px-10 py-4 rounded-3xl">Search</button>
                 </div>
-                
-                <div class="flex items-center gap-6 text-sm">
-                    <div class="flex items-center gap-2">
-                        <i class="fas fa-check-circle text-[#22D3EE]"></i>
-                        <span class="text-slate-300">1,025+ Pokémon</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <i class="fas fa-check-circle text-[#22D3EE]"></i>
-                        <span class="text-slate-300">900+ Moves</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <i class="fas fa-check-circle text-[#22D3EE]"></i>
-                        <span class="text-slate-300">Gen 9 ready</span>
-                    </div>
-                </div>
-                
-                <a href="https://github.com/pokepc/dataset/tree/main/data" 
-                   target="_blank"
-                   class="inline-flex items-center gap-2 text-[#00A3FF] hover:text-[#22D3EE] text-sm font-medium">
-                    <i class="fas fa-external-link-alt"></i>
-                    <span>Data from pokepc/dataset • Live JSON</span>
-                </a>
             </div>
             
-            <!-- Hero Visual -->
             <div class="hidden md:flex justify-center relative">
                 <div class="w-80 h-80 bg-gradient-to-br from-[#00A3FF]/10 to-[#22D3EE]/10 rounded-[4rem] flex items-center justify-center backdrop-blur-3xl border border-white/10">
                     <div class="text-[220px] leading-none drop-shadow-2xl">🐾</div>
-                </div>
-                
-                <!-- Floating badges -->
-                <div class="absolute -top-4 -left-6 bg-slate-900/90 backdrop-blur-md px-5 py-3 rounded-3xl border border-white/10 shadow-2xl flex items-center gap-3">
-                    <span class="text-3xl">🔥</span>
-                    <div>
-                        <p class="font-semibold text-sm">Scarlet &amp; Violet</p>
-                        <p class="text-xs text-slate-400">Fully supported</p>
-                    </div>
-                </div>
-                
-                <div class="absolute -bottom-6 right-12 bg-slate-900/90 backdrop-blur-md px-6 py-4 rounded-3xl border border-white/10 shadow-2xl text-center">
-                    <p class="text-[#22D3EE] text-sm font-medium">1,025 species loaded</p>
-                    <div class="h-2 bg-[#22D3EE]/20 rounded-full mt-2 overflow-hidden">
-                        <div class="h-2 w-4/5 bg-[#22D3EE] rounded-full"></div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -219,128 +88,45 @@
     <section class="max-w-7xl mx-auto px-6 py-20">
         <div class="text-center mb-16">
             <h2 class="text-5xl font-semibold tracking-tight">Everything you need.<br>Modern and instant.</h2>
-            <p class="text-slate-400 mt-4 text-lg max-w-md mx-auto">All data pulled directly from the official pokepc/dataset.</p>
         </div>
         
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Card 1: Pokédex (now links directly) -->
             <div onclick="window.location.href='pokedex.html'" class="card bg-slate-900/70 border border-slate-700 rounded-3xl p-8 cursor-pointer group">
                 <div class="text-7xl mb-8">📖</div>
                 <h3 class="text-3xl font-semibold mb-3 group-hover:text-[#00A3FF]">National Pokédex</h3>
-                <p class="text-slate-400 mb-8">Searchable database with stats, evolutions, forms, and every generation.</p>
-                <div class="text-[#22D3EE] text-sm font-medium flex justify-between items-center">
-                    <span>1,025 Pokémon</span>
-                    <span class="group-hover:underline">Explore →</span>
-                </div>
+                <p class="text-slate-400 mb-8">1,025 Pokémon with full stats, evolutions, forms, and game data.</p>
+                <div class="text-[#22D3EE] text-sm font-medium flex justify-between">Explore →</div>
             </div>
             
-            <!-- Other cards stay as placeholders for now -->
-            <div onclick="alert('Moves page coming soon!')" class="card bg-slate-900/70 border border-slate-700 rounded-3xl p-8 cursor-pointer group">
+            <div onclick="window.location.href='moves.html'" class="card bg-slate-900/70 border border-slate-700 rounded-3xl p-8 cursor-pointer group">
                 <div class="text-7xl mb-8">⚡</div>
                 <h3 class="text-3xl font-semibold mb-3 group-hover:text-[#00A3FF]">Moves</h3>
-                <p class="text-slate-400 mb-8">Every attack, power, accuracy, effect, and which Pokémon learn it.</p>
-                <div class="text-[#22D3EE] text-sm font-medium flex justify-between items-center">
-                    <span>900+ moves</span>
-                    <span class="group-hover:underline">Browse moves →</span>
-                </div>
-            </div>
-            
-            <div onclick="alert('Items page coming soon!')" class="card bg-slate-900/70 border border-slate-700 rounded-3xl p-8 cursor-pointer group">
-                <div class="text-7xl mb-8">💎</div>
-                <h3 class="text-3xl font-semibold mb-3 group-hover:text-[#00A3FF]">Items &amp; Berries</h3>
-                <p class="text-slate-400 mb-8">Held items, TMs, berries, and every in-game effect explained.</p>
-                <div class="text-[#22D3EE] text-sm font-medium flex justify-between items-center">
-                    <span>Gen 9 complete</span>
-                    <span class="group-hover:underline">View items →</span>
-                </div>
+                <p class="text-slate-400 mb-8">Every move with power, accuracy, effects, and learnable Pokémon.</p>
+                <div class="text-[#22D3EE] text-sm font-medium flex justify-between">Browse moves →</div>
             </div>
             
             <div onclick="alert('Abilities page coming soon!')" class="card bg-slate-900/70 border border-slate-700 rounded-3xl p-8 cursor-pointer group">
                 <div class="text-7xl mb-8">🛡️</div>
                 <h3 class="text-3xl font-semibold mb-3 group-hover:text-[#00A3FF]">Abilities</h3>
-                <p class="text-slate-400 mb-8">Hidden abilities, battle effects, and every Pokémon that has them.</p>
-                <div class="text-[#22D3EE] text-sm font-medium flex justify-between items-center">
-                    <span>Live dataset</span>
-                    <span class="group-hover:underline">Discover abilities →</span>
-                </div>
-            </div>
-            
-            <div onclick="alert('Type Chart coming soon!')" class="card bg-slate-900/70 border border-slate-700 rounded-3xl p-8 cursor-pointer group">
-                <div class="text-7xl mb-8">🔄</div>
-                <h3 class="text-3xl font-semibold mb-3 group-hover:text-[#00A3FF]">Type Chart</h3>
-                <p class="text-slate-400 mb-8">Beautiful interactive damage calculator across all generations.</p>
-                <div class="text-[#22D3EE] text-sm font-medium flex justify-between items-center">
-                    <span>Gen 1–9</span>
-                    <span class="group-hover:underline">Open chart →</span>
-                </div>
-            </div>
-            
-            <div onclick="alert('Team Builder coming soon!')" class="card bg-slate-900/70 border border-slate-700 rounded-3xl p-8 cursor-pointer group">
-                <div class="text-7xl mb-8">👥</div>
-                <h3 class="text-3xl font-semibold mb-3 group-hover:text-[#00A3FF]">Team Builder</h3>
-                <p class="text-slate-400 mb-8">Build competitive teams with full stats, coverage, and export options.</p>
-                <div class="text-[#22D3EE] text-sm font-medium flex justify-between items-center">
-                    <span>Coming soon</span>
-                    <span class="group-hover:underline">Start building →</span>
-                </div>
+                <p class="text-slate-400 mb-8">Complete ability list with effects and Pokémon that have them.</p>
+                <div class="text-[#22D3EE] text-sm font-medium flex justify-between">Coming soon</div>
             </div>
         </div>
     </section>
 
-    <!-- DATA SOURCE -->
-    <div class="bg-[#0A1320] py-16">
-        <div class="max-w-7xl mx-auto px-6 text-center">
-            <p class="text-slate-400 text-sm mb-4">All data is live from the official open-source repository</p>
-            <a href="https://github.com/pokepc/dataset/tree/main/data" 
-               target="_blank"
-               class="inline-flex items-center gap-4 bg-white/5 hover:bg-white/10 border border-white/10 px-8 py-6 rounded-3xl transition-colors">
-                <img src="https://github.com/pokepc.png" alt="pokepc" class="w-10 h-10 rounded-2xl">
-                <div class="text-left">
-                    <div class="font-semibold text-lg">pokepc/dataset</div>
-                    <div class="text-xs text-slate-400">MIT • Real-time JSON files</div>
-                </div>
-                <i class="fas fa-arrow-right text-[#00A3FF] text-2xl"></i>
-            </a>
-        </div>
-    </div>
-
-    <!-- FOOTER -->
-    <footer class="bg-black py-12 border-t border-slate-800">
-        <div class="max-w-7xl mx-auto px-6 text-center text-xs text-slate-500">
-            <p>PokéHelp is an unofficial fan tool. Not affiliated with The Pokémon Company.</p>
-            <p class="mt-3">Built with the pokepc/dataset • Open source &amp; community-driven</p>
-            <p class="mt-8 text-slate-600">jackjdn163.github.io/PokeHelp</p>
-        </div>
+    <footer class="bg-black py-12 border-t border-slate-800 text-center text-xs text-slate-500">
+        <p>PokéHelp is a fan-made tool. Data from pokepc/dataset • Not affiliated with The Pokémon Company.</p>
     </footer>
 
     <script>
-        function initializeTailwind() {
-            tailwind.config = {
-                content: [],
-                theme: { extend: {} }
-            }
-        }
-        
         function handleSearch() {
             const query = document.getElementById('hero-search').value.trim();
-            if (!query) {
-                alert("Try searching for a Pokémon, move, or item...");
-                return;
-            }
-            // For now it still alerts, but you can change this later to go to a search page
-            alert(`🔍 Searching "${query}" across the full dataset...\n\n(Full search coming in the next update!)`);
+            if (query) alert(`Searching for "${query}"... (global search coming soon!)`);
         }
-        
         function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('hidden');
+            alert("Mobile menu with all tabs coming soon!");
         }
-        
-        window.onload = function() {
-            initializeTailwind();
-            console.log('%c✅ PokéHelp modern homepage loaded – now with working Pokédex link!', 'color:#00A3FF; font-weight:600');
-            console.log('Data source: https://github.com/pokepc/dataset/tree/main/data');
-        };
+        window.onload = () => console.log('%c✅ PokéHelp full site loaded!', 'color:#00A3FF; font-weight:600');
     </script>
 </body>
 </html>
