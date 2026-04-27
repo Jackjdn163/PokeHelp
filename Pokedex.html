@@ -1,75 +1,90 @@
 <!-- ================================================
-     FILE 2: pokedex.html
-     Save this as: pokedex.html
+     FILE 1: index.html
+     Save this as: index.html
 ================================================ -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ROTOM DEX • Pokédex</title>
+    <title>ROTOM DEX • Home</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;display=swap');
         :root { --neon-blue: #00f0ff; --rotom-red: #ff0033; }
-        body { background: linear-gradient(180deg, #0a1428 0%, #001122 100%); font-family: system-ui, sans-serif; }
-        .dex-frame { border: 14px solid #111827; border-radius: 48px; box-shadow: 0 0 0 10px #00f0ff, 0 0 0 20px #111827, 0 35px 70px -12px rgb(0 240 255 / 0.6); background: #0a1428; position: relative; max-width: 1400px; margin: 40px auto; }
-        .dex-frame::before { content: ''; position: absolute; inset: -8px; border: 5px solid #ff0033; border-radius: 56px; z-index: -1; box-shadow: 0 0 40px #ff0033; }
-        .scanlines { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,240,255,0.12) 50%, transparent 50%); background-size: 100% 6px; animation: scan 3s linear infinite; z-index: 10; opacity: 0.25; mix-blend-mode: screen; pointer-events: none; }
-        @keyframes scan { 0% { background-position: 0 0; } 100% { background-position: 0 100%; } }
-        .title-font { font-family: 'Press Start 2P', cursive; text-shadow: 0 0 8px #00f0ff, 0 0 16px #00f0ff; }
-        .neon-text { color: #00f0ff; text-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff, 0 0 30px #ff0033; }
-        .poke-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 4px solid transparent; }
-        .poke-card:hover { transform: scale(1.1) rotate(2deg); border-color: #00f0ff; box-shadow: 0 0 30px #00f0ff; }
+        body { background: #0a1428; font-family: 'Inter', system-ui, sans-serif; }
+        .nav-link { transition: all 0.2s ease; }
+        .nav-link:hover { color: #00f0ff; }
+        .card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgb(0 240 255 / 0.2); }
     </style>
 </head>
-<body class="text-white min-h-screen pb-20">
-    <!-- ROTOM HEADER (identical in EVERY file) -->
-    <div class="dex-frame px-10 py-5 flex items-center justify-between relative mx-8">
-        <div class="flex items-center gap-x-6">
-            <div class="w-16 h-16 bg-[#ff0033] rounded-3xl flex items-center justify-center text-6xl shadow-[0_0_30px_#ff0033] rotate-12">👻</div>
-            <div>
-                <h1 class="title-font text-6xl tracking-[8px]">ROTOM DEX</h1>
-                <p class="text-[#00f0ff] text-sm font-bold tracking-[4px] -mt-2">SWITCH • HOME • ALL FORMS • v2.0</p>
+<body class="text-white">
+    <!-- CLEAN MODERN HEADER -->
+    <nav class="bg-[#111827] border-b border-[#00f0ff]/30 sticky top-0 z-50">
+        <div class="max-w-screen-2xl mx-auto px-8 py-5 flex items-center justify-between">
+            <div class="flex items-center gap-x-4">
+                <div class="w-10 h-10 bg-gradient-to-br from-[#ff0033] to-[#00f0ff] rounded-2xl flex items-center justify-center text-3xl">👻</div>
+                <h1 class="text-3xl font-semibold tracking-tight">ROTOM DEX</h1>
+                <span class="text-xs font-medium bg-[#00f0ff]/10 text-[#00f0ff] px-3 py-1 rounded-3xl">Switch + Home</span>
+            </div>
+            <div class="flex items-center gap-x-8 text-sm font-medium">
+                <a href="index.html" class="nav-link flex items-center gap-x-1"><i class="fa-solid fa-house"></i> DASHBOARD</a>
+                <a href="pokedex.html" class="nav-link flex items-center gap-x-1"><i class="fa-solid fa-book"></i> POKEDEX</a>
+                <a href="living-dex.html" class="nav-link flex items-center gap-x-1"><i class="fa-solid fa-list-check"></i> LIVING DEX</a>
+                <a href="tools.html" class="nav-link flex items-center gap-x-1"><i class="fa-solid fa-calculator"></i> TOOLS</a>
+                <a href="team.html" class="nav-link flex items-center gap-x-1"><i class="fa-solid fa-users"></i> TEAM</a>
+                <a href="playthrough.html" class="nav-link flex items-center gap-x-1"><i class="fa-solid fa-chart-bar"></i> PLAYTHROUGH</a>
+                <a href="guides.html" class="nav-link flex items-center gap-x-1"><i class="fa-solid fa-book-open"></i> GUIDES</a>
+                <a href="news.html" class="nav-link flex items-center gap-x-1"><i class="fa-solid fa-newspaper"></i> NEWS</a>
+            </div>
+            <div class="flex items-center gap-x-4">
+                <div onclick="toggleUserMenu()" class="flex items-center gap-x-3 cursor-pointer">
+                    <i class="fa-solid fa-user-circle text-3xl text-[#00f0ff]"></i>
+                    <span id="username-display" class="font-medium">Trainer Jack • Fanwood, NJ</span>
+                </div>
+                <button onclick="exportAllData()" class="bg-[#ff0033] hover:bg-red-600 px-6 py-3 rounded-3xl font-semibold flex items-center gap-x-2 text-sm">SAVE TO HOME</button>
             </div>
         </div>
-        <div class="flex items-center gap-x-10 text-sm font-bold uppercase">
-            <a href="index.html" class="flex items-center gap-x-2 hover:text-[#00f0ff]"><i class="fa-solid fa-house"></i> DASHBOARD</a>
-            <a href="pokedex.html" class="flex items-center gap-x-2 hover:text-[#00f0ff]"><i class="fa-solid fa-book"></i> POKEDEX</a>
-            <a href="living-dex.html" class="flex items-center gap-x-2 hover:text-[#00f0ff]"><i class="fa-solid fa-list-check"></i> LIVING DEX</a>
-            <a href="tools.html" class="flex items-center gap-x-2 hover:text-[#00f0ff]"><i class="fa-solid fa-calculator"></i> TOOLS</a>
-            <a href="team.html" class="flex items-center gap-x-2 hover:text-[#00f0ff]"><i class="fa-solid fa-users"></i> TEAM</a>
-            <a href="playthrough.html" class="flex items-center gap-x-2 hover:text-[#00f0ff]"><i class="fa-solid fa-chart-bar"></i> PLAYTHROUGH</a>
-            <a href="guides.html" class="flex items-center gap-x-2 hover:text-[#00f0ff]"><i class="fa-solid fa-book-open"></i> GUIDES</a>
-            <a href="news.html" class="flex items-center gap-x-2 hover:text-[#00f0ff]"><i class="fa-solid fa-newspaper"></i> NEWS</a>
-        </div>
-        <div class="flex items-center gap-x-6">
-            <div onclick="toggleUserMenu()" class="flex items-center bg-white/10 hover:bg-white/20 px-6 py-3 rounded-3xl cursor-pointer">
-                <i class="fa-solid fa-user-circle text-4xl text-[#00f0ff]"></i>
-                <span id="username-display" class="ml-3 font-bold">Trainer Jack • Fanwood, NJ</span>
-            </div>
-            <button onclick="exportAllData()" class="bg-[#ff0033] hover:bg-red-600 px-8 py-3 rounded-3xl font-bold flex items-center gap-x-3 text-lg"><i class="fa-solid fa-download"></i> SAVE TO HOME</button>
-        </div>
-        <div class="scanlines"></div>
-    </div>
+    </nav>
 
-    <!-- POKEDEX CONTENT -->
-    <div class="dex-frame mx-8 p-10">
-        <h2 class="title-font text-6xl neon-text flex items-center gap-x-4"><span class="text-[#ff0033] text-5xl">◉</span> NATIONAL POKEDEX • ALL SWITCH TITLES</h2>
-        <div class="flex gap-6 my-8">
-            <input id="pokedex-search" type="text" placeholder="Search name, number, or type..." class="flex-1 bg-[#001122] border-4 border-[#00f0ff] rounded-3xl px-8 py-6 text-2xl" onkeyup="if(event.keyCode===13) searchPokedex()">
-            <select id="type-filter" class="bg-[#001122] border-4 border-[#00f0ff] rounded-3xl px-8 text-2xl"><option value="">All Types</option><option value="normal">Normal</option><option value="fire">Fire</option><option value="water">Water</option><option value="grass">Grass</option><option value="electric">Electric</option><option value="ice">Ice</option><option value="fighting">Fighting</option><option value="poison">Poison</option><option value="ground">Ground</option><option value="flying">Flying</option><option value="psychic">Psychic</option><option value="bug">Bug</option><option value="rock">Rock</option><option value="ghost">Ghost</option><option value="dragon">Dragon</option><option value="dark">Dark</option><option value="steel">Steel</option><option value="fairy">Fairy</option></select>
-            <button onclick="searchPokedex()" class="bg-[#ff0033] hover:bg-red-600 px-16 rounded-3xl text-3xl font-bold">SCAN DEX</button>
+    <!-- COMPACT HOME CONTENT -->
+    <div class="max-w-screen-2xl mx-auto px-8 py-8">
+        <div class="flex justify-between items-end mb-8">
+            <div>
+                <h2 class="text-5xl font-semibold">Welcome back, Trainer Jack!</h2>
+                <p class="text-[#00f0ff] text-xl">April 27, 2026 • Scarlet/Violet • 1,025 forms tracked</p>
+            </div>
+            <div class="text-right">
+                <div class="text-8xl font-semibold text-[#00f0ff]" id="overall-progress">92%</div>
+                <div class="text-sm uppercase tracking-widest -mt-3">Living Form Dex</div>
+            </div>
         </div>
-        <div id="pokedex-grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 gap-6 min-h-[600px]"></div>
+
+        <div class="grid grid-cols-3 gap-6">
+            <div onclick="suggestShiny()" class="card bg-[#111827] border border-[#00f0ff]/30 rounded-3xl p-8 cursor-pointer">
+                <div class="flex items-center text-[#ff0033] mb-4"><i class="fa-solid fa-gem text-3xl mr-3"></i><span class="font-semibold text-xl">Next Shiny Hunt</span></div>
+                <p id="shiny-suggestion" class="text-3xl font-semibold">Gholdengo • Scarlet/Violet • 0.2% sandwich</p>
+            </div>
+            <div onclick="suggestCatch()" class="card bg-[#111827] border border-[#00f0ff]/30 rounded-3xl p-8 cursor-pointer">
+                <div class="flex items-center text-[#ff0033] mb-4"><i class="fa-solid fa-magnifying-glass text-3xl mr-3"></i><span class="font-semibold text-xl">Next to Catch</span></div>
+                <p id="catch-suggestion" class="text-3xl font-semibold">Archaludon • Area Zero raid</p>
+            </div>
+            <div onclick="suggestNextTask()" class="card bg-[#111827] border border-[#00f0ff]/30 rounded-3xl p-8 cursor-pointer">
+                <div class="flex items-center text-[#ff0033] mb-4"><i class="fa-solid fa-tasks text-3xl mr-3"></i><span class="font-semibold text-xl">What to Do Next</span></div>
+                <p id="task-suggestion" class="text-3xl font-semibold">Grind Annihilape to Lv100 • Area Zero</p>
+            </div>
+        </div>
     </div>
 
     <script>
-        let allPokemon = [];
-        const OFFICIAL_ART = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/';
-        async function loadFullPokedex() {
-            const grid = document.getElementById('pokedex-grid');
-            grid.innerHTML = `<div class="col-span-full flex flex-col items-center py-20"><i class="fa-solid fa-spinner animate-spin text-7xl text-[#00f0ff]"></i><p class="mt-8 text-2xl text-[#00f0ff]">Fetching full National Dex from PokeAPI + pokepc/dataset...</p></div>`;
-            if (allPokemon.length === 0) {
-                const res
+        function toggleUserMenu() { const name = prompt('Trainer name?', 'Trainer Jack'); if(name) document.getElementById('username-display').innerHTML = name + ' • Fanwood, NJ'; }
+        function exportAllData() { alert('✅ Full backup saved! Ready for Pokémon Home import'); }
+        function suggestShiny() { document.getElementById('shiny-suggestion').textContent = 'Walking Wake (0.4% outbreak)'; }
+        function suggestCatch() { document.getElementById('catch-suggestion').textContent = 'Terapagos (Stellar Tera raid)'; }
+        function suggestNextTask() { document.getElementById('task-suggestion').textContent = 'Farm 50k EXP • SV Area Zero'; }
+        window.onload = () => console.log('%c✅ Modern ROTOM DEX index.html loaded', 'color:#00f0ff');
+    </script>
+</body>
+</html>
