@@ -41,12 +41,20 @@
             border-radius: 20px;
             margin-top: 4px;
         }
+        .goal-btn {
+            transition: all 0.2s ease;
+        }
+        .goal-btn.active {
+            border-color: #00f0ff !important;
+            background: rgba(0, 240, 255, 0.1);
+            color: #00f0ff;
+        }
         .result-box { animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body class="text-white min-h-screen">
-    <!-- HEADER -->
+    <!-- CLEAN MODERN HEADER -->
     <nav class="bg-[#111827] border-b border-[#00f0ff]/30 sticky top-0 z-50">
         <div class="max-w-screen-2xl mx-auto px-8 py-5 flex items-center justify-between">
             <div class="flex items-center gap-x-4">
@@ -84,7 +92,7 @@
             <button onclick="openTool(2)" id="tab-2" class="tab-button px-10 py-4 text-lg font-medium">Shiny Probability</button>
         </div>
 
-        <!-- EXP CALCULATOR – Exact style from your Living-Dex-v2 -->
+        <!-- EXP CALCULATOR -->
         <div id="panel-0" class="tool-panel active">
             <div class="bg-[#111827] rounded-3xl p-8 max-w-2xl">
                 <h3 class="text-2xl font-semibold mb-6">EXP Calculator • All Switch Games</h3>
@@ -102,15 +110,16 @@
                         <label>Current Level</label>
                         <span id="current-level-display" class="font-semibold text-[#00f0ff]">50</span>
                     </div>
-                    <input type="range" id="current-level-slider" min="1" max="100" value="50" oninput="updateLevelDisplay()" class="w-full accent-[#00f0ff]">
+                    <input type="range" id="current-level-slider" min="1" max="100" value="50" 
+                           oninput="updateLevelDisplay()" class="w-full accent-[#00f0ff]">
                 </div>
 
                 <div class="mb-8">
                     <label class="block text-sm mb-2">Target</label>
                     <div class="flex gap-3">
-                        <button onclick="setTarget(0)" id="target-0" class="flex-1 py-3 rounded-3xl border-2 border-[#00f0ff] text-[#00f0ff] font-medium active">To Level 100</button>
-                        <button onclick="setTarget(1)" id="target-1" class="flex-1 py-3 rounded-3xl border-2 border-[#00f0ff]/30 hover:border-[#00f0ff]">Until Next Level</button>
-                        <button onclick="setTarget(2)" id="target-2" class="flex-1 py-3 rounded-3xl border-2 border-[#00f0ff]/30 hover:border-[#00f0ff]">Until Evolution</button>
+                        <button onclick="setTarget(0)" id="target-0" class="goal-btn flex-1 py-3 rounded-3xl border-2 border-[#00f0ff] text-[#00f0ff] font-medium active">To Level 100</button>
+                        <button onclick="setTarget(1)" id="target-1" class="goal-btn flex-1 py-3 rounded-3xl border-2 border-[#00f0ff]/30 hover:border-[#00f0ff]">Until Next Level</button>
+                        <button onclick="setTarget(2)" id="target-2" class="goal-btn flex-1 py-3 rounded-3xl border-2 border-[#00f0ff]/30 hover:border-[#00f0ff]">Until Evolution</button>
                     </div>
                 </div>
 
@@ -164,13 +173,11 @@
             document.getElementById('pokemon-search').value = name;
             document.getElementById('pokemon-list').classList.add('hidden');
 
-            // Get growth rate and evolution level
             try {
                 const speciesRes = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`);
                 const species = await speciesRes.json();
                 selectedGrowthRate = species.growth_rate.name;
 
-                // Get evolution chain for "Until Evolution"
                 const chainRes = await fetch(species.evolution_chain.url);
                 const chainData = await chainRes.json();
                 nextEvolutionLevel = getNextEvolutionLevel(chainData.chain, name.toLowerCase());
@@ -285,7 +292,7 @@
 
         window.onload = async () => {
             await loadAllPokemon();
-            console.log('%c✅ EXP Calculator now matches your old Living-Dex-v2 exactly (correct evolution levels + growth rates)', 'color:#00f0ff;font-size:18px');
+            console.log('%c✅ EXP Calculator fully updated with clear goal highlighting', 'color:#00f0ff;font-size:18px');
         };
     </script>
 </body>
