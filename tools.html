@@ -1,6 +1,7 @@
 <!-- ================================================
      FILE: tools.html
      Save this as: tools.html
+     (All 3 tools restored + EXP fully fixed and matches your Living-Dex-v2 style)
 ================================================ -->
 <!DOCTYPE html>
 <html lang="en">
@@ -92,7 +93,7 @@
             <button onclick="openTool(2)" id="tab-2" class="tab-button px-10 py-4 text-lg font-medium">Shiny Probability</button>
         </div>
 
-        <!-- EXP CALCULATOR -->
+        <!-- TOOL 0: EXP CALCULATOR (fully matches your old Living-Dex-v2 style) -->
         <div id="panel-0" class="tool-panel active">
             <div class="bg-[#111827] rounded-3xl p-8 max-w-2xl">
                 <h3 class="text-2xl font-semibold mb-6">EXP Calculator • All Switch Games</h3>
@@ -110,8 +111,7 @@
                         <label>Current Level</label>
                         <span id="current-level-display" class="font-semibold text-[#00f0ff]">50</span>
                     </div>
-                    <input type="range" id="current-level-slider" min="1" max="100" value="50" 
-                           oninput="updateLevelDisplay()" class="w-full accent-[#00f0ff]">
+                    <input type="range" id="current-level-slider" min="1" max="100" value="50" oninput="updateLevelDisplay()" class="w-full accent-[#00f0ff]">
                 </div>
 
                 <div class="mb-8">
@@ -129,9 +129,49 @@
             </div>
         </div>
 
-        <!-- Other tools -->
-        <div id="panel-1" class="tool-panel">IV/EV/Stat content here</div>
-        <div id="panel-2" class="tool-panel">Shiny Probability content here</div>
+        <!-- TOOL 1: IV / EV / Stat Calc -->
+        <div id="panel-1" class="tool-panel">
+            <div class="bg-[#111827] rounded-3xl p-8 max-w-3xl">
+                <h3 class="text-2xl font-semibold mb-6">IV / EV / Stat Calculator • Switch Formula</h3>
+                <div class="grid grid-cols-3 gap-8 items-center">
+                    <div>
+                        <label class="block text-sm mb-2">Base Stat</label>
+                        <input id="base-stat" type="number" value="100" class="styled-input">
+                        <label class="block text-sm mt-6 mb-2">IV (0-31)</label>
+                        <input id="iv" type="number" value="31" max="31" class="styled-input">
+                        <label class="block text-sm mt-6 mb-2">EV (0-252)</label>
+                        <input id="ev" type="number" value="252" max="252" class="styled-input">
+                    </div>
+                    <div class="text-center">
+                        <div id="final-stat" class="text-8xl font-semibold text-[#00f0ff]">347</div>
+                        <button onclick="calculateStat()" class="mt-8 bg-[#00f0ff] text-[#001122] px-12 py-4 rounded-3xl text-xl font-semibold">CALCULATE</button>
+                    </div>
+                    <div class="text-sm leading-relaxed">
+                        Level 100 • No nature<br>
+                        Works for all Switch titles
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TOOL 2: SHINY PROBABILITY -->
+        <div id="panel-2" class="tool-panel">
+            <div class="bg-[#111827] rounded-3xl p-8 max-w-xl">
+                <h3 class="text-2xl font-semibold mb-6">Shiny Hunting Probability • Switch Games</h3>
+                <select id="shiny-game" class="styled-input mb-6">
+                    <option value="sv">Scarlet / Violet (Sandwich + Shiny Charm)</option>
+                    <option value="la">Legends: Arceus (Outbreaks)</option>
+                    <option value="swsh">Sword / Shield</option>
+                    <option value="bdsp">Brilliant Diamond / Shining Pearl</option>
+                    <option value="letsgo">Let’s Go Pikachu / Eevee</option>
+                </select>
+                <div class="flex gap-4">
+                    <input id="encounters" type="number" value="500" class="styled-input flex-1" placeholder="Encounters so far">
+                    <button onclick="calculateShiny()" class="px-12 bg-gradient-to-r from-pink-400 to-purple-400 rounded-3xl text-xl font-semibold">CALCULATE ODDS</button>
+                </div>
+                <div id="shiny-result" class="result-box mt-8 text-center text-4xl font-semibold hidden"></div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -275,6 +315,28 @@
             resultEl.innerHTML = resultHTML;
         }
 
+        function calculateStat() {
+            const base = parseInt(document.getElementById('base-stat').value) || 100;
+            const iv = parseInt(document.getElementById('iv').value) || 31;
+            const ev = parseInt(document.getElementById('ev').value) || 0;
+            const stat = Math.floor(((2 * base + iv + Math.floor(ev / 4)) * 100 / 100) + 5);
+            document.getElementById('final-stat').textContent = stat;
+        }
+
+        function calculateShiny() {
+            const game = document.getElementById('shiny-game').value;
+            const encounters = parseInt(document.getElementById('encounters').value) || 0;
+            let baseRate = 1 / 4096;
+            if (game === 'sv') baseRate = 1 / 512;
+            else if (game === 'la') baseRate = 1 / 256;
+            else if (game === 'letsgo') baseRate = 1 / 4096;
+
+            const chance = (1 - Math.pow(1 - baseRate, encounters)) * 100;
+            const resultEl = document.getElementById('shiny-result');
+            resultEl.classList.remove('hidden');
+            resultEl.innerHTML = `≈ <span class="text-pink-400">${chance.toFixed(2)}%</span> chance of shiny so far<br><span class="text-sm">Next encounter: ${(baseRate*100).toFixed(4)}% odds</span>`;
+        }
+
         function openTool(n) {
             document.querySelectorAll('.tool-panel').forEach(p => p.classList.remove('active'));
             document.getElementById('panel-' + n).classList.add('active');
@@ -292,7 +354,7 @@
 
         window.onload = async () => {
             await loadAllPokemon();
-            console.log('%c✅ EXP Calculator fully updated with clear goal highlighting', 'color:#00f0ff;font-size:18px');
+            console.log('%c✅ tools.html fully restored with all 3 tools + correct EXP goal highlighting', 'color:#00f0ff;font-size:18px');
         };
     </script>
 </body>
