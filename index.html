@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokéHelper • Modern Pokédex</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600&amp;display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+        
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+        
+        .title-font {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .pokedex-bg {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.4);
+        }
+
+        .scanline {
+            position: relative;
+        }
+        
+        .scanline::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 50%,
+                rgba(0, 255, 100, 0.08) 50%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            animation: scan 4s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 400px; }
+        }
+
+        .pokemon-ball {
+            animation: spin 20s linear infinite;
+        }
+    </style>
+</head>
+<body class="bg-zinc-950 text-white pokedex-bg min-h-screen overflow-hidden">
+    <div class="max-w-7xl mx-auto p-6">
+        <!-- Top Bar -->
+        <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-red-500 rounded-2xl flex items-center justify-center text-2xl shadow-lg shadow-red-500/50 pokemon-ball">
+                    ⚪
+                </div>
+                <div>
+                    <h1 class="title-font text-4xl font-semibold tracking-tighter">PokéHelper</h1>
+                    <p class="text-emerald-400 text-sm -mt-1">Solo Play Companion</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <div class="bg-zinc-900/80 backdrop-blur-md px-4 py-2 rounded-3xl flex items-center gap-2 border border-zinc-700">
+                    <input type="text" id="search" 
+                           class="bg-transparent outline-none text-sm w-72 placeholder-zinc-400"
+                           placeholder="Search Pokémon, moves, locations...">
+                    <button onclick="searchPokemon()" 
+                            class="bg-emerald-500 hover:bg-emerald-600 transition-colors w-8 h-8 rounded-2xl flex items-center justify-center">
+                        🔍
+                    </button>
+                </div>
+                
+                <div class="flex items-center gap-2 bg-zinc-900/80 backdrop-blur-md px-5 py-2 rounded-3xl border border-zinc-700">
+                    <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                    <span class="text-sm text-zinc-400">Kanto • Gen 1-9</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hero / Home Screen -->
+        <div class="grid grid-cols-12 gap-6">
+            <!-- Main Display -->
+            <div class="col-span-8">
+                <div class="scanline bg-zinc-900/70 backdrop-blur-xl border border-zinc-700 rounded-3xl p-8 h-full relative overflow-hidden">
+                    <div class="absolute top-6 right-6 bg-black/60 text-xs px-3 py-1 rounded-full flex items-center gap-2">
+                        <span class="text-emerald-400">● LIVE</span>
+                        <span id="time" class="tabular-nums"></span>
+                    </div>
+
+                    <h2 class="title-font text-6xl font-bold tracking-tighter mb-2">
+                        Welcome back, Trainer
+                    </h2>
+                    <p class="text-zinc-400 text-xl max-w-md">Your modern Pokédex for solo adventures. No internet required after first load.</p>
+
+                    <div class="mt-12 grid grid-cols-3 gap-4">
+                        <!-- Featured Pokémon -->
+                        <div onclick="viewPokemon(25)" class="card-hover bg-zinc-800/60 border border-zinc-700 rounded-2xl p-4 cursor-pointer group">
+                            <div class="h-40 flex items-center justify-center text-8xl transition-transform group-hover:scale-110">⚡</div>
+                            <div class="flex justify-between items-end">
+                                <div>
+                                    <div class="text-emerald-400 text-xs tracking-widest">STARTER</div>
+                                    <div class="title-font text-3xl">Pikachu</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-4xl font-mono text-yellow-400">#025</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div onclick="viewPokemon(6)" class="card-hover bg-zinc-800/60 border border-zinc-700 rounded-2xl p-4 cursor-pointer group">
+                            <div class="h-40 flex items-center justify-center text-8xl transition-transform group-hover:scale-110">🔥</div>
+                            <div class="flex justify-between items-end">
+                                <div>
+                                    <div class="text-orange-400 text-xs tracking-widest">LEGEND</div>
+                                    <div class="title-font text-3xl">Charizard</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-4xl font-mono text-orange-400">#006</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div onclick="viewPokemon(393)" class="card-hover bg-zinc-800/60 border border-zinc-700 rounded-2xl p-4 cursor-pointer group">
+                            <div class="h-40 flex items-center justify-center text-8xl transition-transform group-hover:scale-110">💧</div>
+                            <div class="flex justify-between items-end">
+                                <div>
+                                    <div class="text-sky-400 text-xs tracking-widest">NEW</div>
+                                    <div class="title-font text-3xl">Piplup</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-4xl font-mono text-sky-400">#393</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-span-4 space-y-6">
+                <!-- Quick Tools -->
+                <div class="bg-zinc-900/70 backdrop-blur-xl border border-zinc-700 rounded-3xl p-6">
+                    <h3 class="title-font text-xl mb-4 flex items-center gap-2">
+                        <span>⚡</span> Quick Tools
+                    </h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="alert('Team Builder coming soon!')" 
+                                class="bg-zinc-800 hover:bg-zinc-700 transition-colors rounded-2xl p-4 text-left">
+                            <div class="text-3xl mb-2">👥</div>
+                            <div class="font-medium">Team Builder</div>
+                            <div class="text-xs text-zinc-400">Build &amp; optimize</div>
+                        </button>
+                        
+                        <button onclick="alert('Solo Guides coming soon!')" 
+                                class="bg-zinc-800 hover:bg-zinc-700 transition-colors rounded-2xl p-4 text-left">
+                            <div class="text-3xl mb-2">🗺️</div>
+                            <div class="font-medium">Solo Guides</div>
+                            <div class="text-xs text-zinc-400">Nuzlocke • Challenge</div>
+                        </button>
+                        
+                        <button onclick="alert('Type Chart opening...')" 
+                                class="bg-zinc-800 hover:bg-zinc-700 transition-colors rounded-2xl p-4 text-left">
+                            <div class="text-3xl mb-2">📊</div>
+                            <div class="font-medium">Type Chart</div>
+                            <div class="text-xs text-zinc-400">Interactive</div>
+                        </button>
+                        
+                        <button onclick="alert('IV Calculator coming soon!')" 
+                                class="bg-zinc-800 hover:bg-zinc-700 transition-colors rounded-2xl p-4 text-left">
+                            <div class="text-3xl mb-2">📈</div>
+                            <div class="font-medium">IV Checker</div>
+                            <div class="text-xs text-zinc-400">Hidden stats</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Daily Tip -->
+                <div class="bg-gradient-to-br from-emerald-900/50 to-zinc-900/70 border border-emerald-500/30 rounded-3xl p-6">
+                    <div class="uppercase text-emerald-400 text-xs tracking-widest mb-2">Trainer Tip</div>
+                    <p class="text-zinc-300">Remember: In solo runs, prioritize Pokémon with early access and good type coverage. Save your Master Balls!</p>
+                    <div class="text-[10px] text-emerald-500/70 mt-4">— Prof. Oak</div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="text-xs text-zinc-500">
+                    Last caught: <span class="text-white">Gyarados • Route 4</span><br>
+                    Current playthrough: <span class="text-emerald-400">Pokémon Scarlet • Solo Nuzlocke</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-zinc-900/90 backdrop-blur-2xl border border-zinc-700 rounded-3xl px-8 py-3 flex items-center gap-8 shadow-2xl">
+            <button onclick="navigate('home')" class="flex flex-col items-center gap-1 text-emerald-400">
+                <span class="text-2xl">🏠</span>
+                <span class="text-xs font-medium">Home</span>
+            </button>
+            <button onclick="navigate('pokedex')" class="flex flex-col items-center gap-1 text-zinc-400 hover:text-white transition-colors">
+                <span class="text-2xl">📖</span>
+                <span class="text-xs font-medium">Pokédex</span>
+            </button>
+            <button onclick="navigate('team')" class="flex flex-col items-center gap-1 text-zinc-400 hover:text-white transition-colors">
+                <span class="text-2xl">👥</span>
+                <span class="text-xs font-medium">My Team</span>
+            </button>
+            <button onclick="navigate('map')" class="flex flex-col items-center gap-1 text-zinc-400 hover:text-white transition-colors">
+                <span class="text-2xl">🗺️</span>
+                <span class="text-xs font-medium">Locations</span>
+            </button>
+            <button onclick="navigate('guides')" class="flex flex-col items-center gap-1 text-zinc-400 hover:text-white transition-colors">
+                <span class="text-2xl">🎮</span>
+                <span class="text-xs font-medium">Guides</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Real-time clock
+        function updateTime() {
+            const timeEl = document.getElementById('time');
+            setInterval(() => {
+                const now = new Date();
+                timeEl.textContent = now.toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: true 
+                });
+            }, 1000);
+        }
+
+        function searchPokemon() {
+            const query = document.getElementById('search').value.trim();
+            if (query) {
+                alert(`Searching Pokédex for: ${query}\n\n(Full search coming in next version!)`);
+            }
+        }
+
+        function viewPokemon(id) {
+            const names = {25: "Pikachu", 6: "Charizard", 393: "Piplup"};
+            alert(`Opening modern Pokédex entry for #${id} ${names[id] || 'Pokémon'}\n\n• Stats • Moves • Evolution • Solo Tips`);
+        }
+
+        function navigate(page) {
+            alert(`Navigating to ${page} screen... (This will be fully built in the next iterations!)`);
+        }
+
+        // Initialize
+        window.onload = () => {
+            updateTime();
+            console.log("%cPokéHelper Modern Pokédex initialized! Ready for solo trainers.", "color: #10b981; font-family: monospace");
+        };
+    </script>
+</body>
+</html>
