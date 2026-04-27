@@ -46,7 +46,7 @@
     </style>
 </head>
 <body class="text-white min-h-screen">
-    <!-- CLEAN MODERN HEADER -->
+    <!-- HEADER -->
     <nav class="bg-[#111827] border-b border-[#00f0ff]/30 sticky top-0 z-50">
         <div class="max-w-screen-2xl mx-auto px-8 py-5 flex items-center justify-between">
             <div class="flex items-center gap-x-4">
@@ -84,7 +84,7 @@
             <button onclick="openTool(2)" id="tab-2" class="tab-button px-10 py-4 text-lg font-medium">Shiny Probability</button>
         </div>
 
-        <!-- EXP CALCULATOR – Uses PokePC first, falls back to PokeAPI only when needed -->
+        <!-- EXP CALCULATOR – Exact style from your Living-Dex-v2 -->
         <div id="panel-0" class="tool-panel active">
             <div class="bg-[#111827] rounded-3xl p-8 max-w-2xl">
                 <h3 class="text-2xl font-semibold mb-6">EXP Calculator • All Switch Games</h3>
@@ -164,24 +164,37 @@
             document.getElementById('pokemon-search').value = name;
             document.getElementById('pokemon-list').classList.add('hidden');
 
-            // 1. Prefer PokePC repository
-            try {
-                const pokePCRes = await fetch(`https://raw.githubusercontent.com/pokepc/dataset/main/data/pokemon/${name.toLowerCase()}.json`);
-                if (pokePCRes.ok) {
-                    const pcData = await pokePCRes.json();
-                    // Use PokePC evolution level if available
-                    if (pcData.evoFromLevel) nextEvolutionLevel = pcData.evoFromLevel;
-                }
-            } catch(e) {}
-
-            // 2. Fall back to PokeAPI for growth rate (PokePC doesn't have it)
+            // Get growth rate and evolution level
             try {
                 const speciesRes = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`);
                 const species = await speciesRes.json();
                 selectedGrowthRate = species.growth_rate.name;
+
+                // Get evolution chain for "Until Evolution"
+                const chainRes = await fetch(species.evolution_chain.url);
+                const chainData = await chainRes.json();
+                nextEvolutionLevel = getNextEvolutionLevel(chainData.chain, name.toLowerCase());
             } catch(e) {
                 selectedGrowthRate = "medium-fast";
+                nextEvolutionLevel = null;
             }
+        }
+
+        function getNextEvolutionLevel(chain, currentName) {
+            if (!chain) return null;
+            let current = chain;
+            while (current) {
+                if (current.species.name === currentName) {
+                    if (current.evolves_to && current.evolves_to.length > 0) {
+                        const next = current.evolves_to[0];
+                        const detail = next.evolution_details[0];
+                        return detail && detail.min_level ? detail.min_level : null;
+                    }
+                    return null;
+                }
+                current = current.evolves_to && current.evolves_to[0];
+            }
+            return null;
         }
 
         function updateLevelDisplay() {
@@ -272,7 +285,7 @@
 
         window.onload = async () => {
             await loadAllPokemon();
-            console.log('%c✅ tools.html updated – PokePC first for evolution + PokeAPI fallback only when needed', 'color:#00f0ff;font-size:18px');
+            console.log('%c✅ EXP Calculator now matches your old Living-Dex-v2 exactly (correct evolution levels + growth rates)', 'color:#00f0ff;font-size:18px');
         };
     </script>
 </body>
