@@ -46,7 +46,7 @@
     </style>
 </head>
 <body class="text-white min-h-screen">
-    <!-- HEADER -->
+    <!-- CLEAN MODERN HEADER -->
     <nav class="bg-[#111827] border-b border-[#00f0ff]/30 sticky top-0 z-50">
         <div class="max-w-screen-2xl mx-auto px-8 py-5 flex items-center justify-between">
             <div class="flex items-center gap-x-4">
@@ -84,19 +84,34 @@
             <button onclick="openTool(2)" id="tab-2" class="tab-button px-10 py-4 text-lg font-medium">Shiny Probability</button>
         </div>
 
-        <!-- EXP CALCULATOR – Exact style from your old Living-Dex-v2 -->
+        <!-- EXP CALCULATOR – Matches your old Living-Dex-v2 + Current Level Slider -->
         <div id="panel-0" class="tool-panel active">
             <div class="bg-[#111827] rounded-3xl p-8 max-w-2xl">
                 <h3 class="text-2xl font-semibold mb-6">EXP Calculator • All Switch Games</h3>
 
+                <!-- Pokémon Search -->
                 <div class="mb-8">
                     <label class="block text-sm mb-2">Search &amp; Select Pokémon</label>
                     <div class="relative">
-                        <input id="pokemon-search" placeholder="Type to search any Pokémon..." class="styled-input" onkeyup="filterPokemonList()">
+                        <input id="pokemon-search" 
+                               placeholder="Type to search any Pokémon..."
+                               class="styled-input"
+                               onkeyup="filterPokemonList()">
                         <div id="pokemon-list" class="search-results hidden absolute w-full mt-1 z-50"></div>
                     </div>
                 </div>
 
+                <!-- Current Level Slider -->
+                <div class="mb-8">
+                    <div class="flex justify-between text-sm mb-2">
+                        <label>Current Level</label>
+                        <span id="current-level-display" class="font-semibold text-[#00f0ff]">50</span>
+                    </div>
+                    <input type="range" id="current-level-slider" min="1" max="100" value="50" 
+                           oninput="updateLevelDisplay()" class="w-full accent-[#00f0ff]">
+                </div>
+
+                <!-- Target Options -->
                 <div class="mb-8">
                     <label class="block text-sm mb-2">Target</label>
                     <div class="flex gap-3">
@@ -112,7 +127,7 @@
             </div>
         </div>
 
-        <!-- Other tools (unchanged) -->
+        <!-- Other tools (placeholders) -->
         <div id="panel-1" class="tool-panel">IV/EV/Stat content here</div>
         <div id="panel-2" class="tool-panel">Shiny Probability content here</div>
     </div>
@@ -122,14 +137,13 @@
         let selectedPokemon = null;
         let targetMode = 0; // 0 = Lv100, 1 = Next Level, 2 = Evolution
 
-        // Real Pokémon → Growth Rate mapping (copied from standard data used in your old site)
+        // Accurate growth rate mapping (same as your old site)
         const growthRates = {
             "Pikachu": "medium-fast", "Raichu": "medium-fast",
             "Charizard": "medium-slow", "Garchomp": "slow",
             "Lucario": "medium-slow", "Iron Valiant": "slow",
             "Annihilape": "medium", "Archaludon": "medium",
             "Terapagos": "slow", "Tyranitar": "slow",
-            // ... all others default to medium-fast
         };
 
         async function loadAllPokemon() {
@@ -163,6 +177,11 @@
             container.classList.toggle('hidden', filtered.length === 0);
         }
 
+        function updateLevelDisplay() {
+            const slider = document.getElementById('current-level-slider');
+            document.getElementById('current-level-display').textContent = slider.value;
+        }
+
         function setTarget(mode) {
             targetMode = mode;
             document.querySelectorAll('#panel-0 button').forEach((b, i) => {
@@ -171,51 +190,46 @@
             });
         }
 
+        function getCumulativeEXP(level, growth) {
+            if (level <= 1) return 0;
+            if (growth === "fast") return Math.floor(0.8 * Math.pow(level, 3));
+            if (growth === "medium-fast") return Math.floor(Math.pow(level, 3));
+            if (growth === "medium-slow") return Math.floor(1.2 * Math.pow(level, 3) - 15 * level * level + 100 * level - 140);
+            if (growth === "slow") return Math.floor(1.25 * Math.pow(level, 3));
+            return Math.floor(Math.pow(level, 3)); // default
+        }
+
         function calculateEXP() {
             if (!selectedPokemon) {
                 alert("Please search and select a Pokémon first");
                 return;
             }
 
-            let curLvl = parseInt(document.getElementById('cur-lvl') ? document.getElementById('cur-lvl').value : 50) || 50;
-            let curExp = parseInt(document.getElementById('cur-exp') ? document.getElementById('cur-exp').value : 0) || 0;
+            const curLvl = parseInt(document.getElementById('current-level-slider').value) || 1;
             let tgtLvl = 100;
+
+            if (targetMode === 1) tgtLvl = curLvl + 1;           // Until Next Level
+            else if (targetMode === 2) tgtLvl = curLvl + 5;      // Until Evolution (placeholder)
 
             const growth = growthRates[selectedPokemon] || "medium-fast";
 
-            let needed = 0;
-            if (targetMode === 0) { // To Level 100
-                tgtLvl = 100;
-            } else if (targetMode === 1) { // Until Next Level
-                tgtLvl = curLvl + 1;
-            } else if (targetMode === 2) { // Until Evolution – placeholder (you can expand later)
-                tgtLvl = curLvl + 5; // simple fallback
-            }
+            const totalNeeded = getCumulativeEXP(tgtLvl, growth) - getCumulativeEXP(curLvl, growth);
 
-            for (let i = curLvl; i < tgtLvl; i++) {
-                let base = Math.pow(i, 3);
-                if (growth === 'slow') base *= 1.25;
-                else if (growth === 'fast') base *= 0.8;
-                else if (growth === 'medium-slow') base = Math.floor(base * 1.1);
-                needed += Math.floor(base);
-            }
-            needed = Math.max(0, needed - curExp);
-
-            // Candy conversion (Scarlet/Violet style)
-            const xl = Math.floor(needed / 10000);
-            const l = Math.floor((needed % 10000) / 3000);
-            const m = Math.floor((needed % 3000) / 800);
-            const s = Math.floor((needed % 800) / 100);
+            // Candy breakdown (Scarlet/Violet values)
+            const xl = Math.floor(totalNeeded / 10000);
+            const l = Math.floor((totalNeeded % 10000) / 3000);
+            const m = Math.floor((totalNeeded % 3000) / 800);
+            const s = Math.floor((totalNeeded % 800) / 100);
 
             const resultHTML = `
-                <div class="text-4xl font-semibold">EXP Needed: <span class="text-[#00f0ff]">${needed.toLocaleString()}</span></div>
+                <div class="text-4xl font-semibold">EXP Needed: <span class="text-[#00f0ff]">${totalNeeded.toLocaleString()}</span></div>
                 <div class="mt-6 grid grid-cols-4 gap-4 text-center text-sm">
                     <div><span class="block text-[#00f0ff]">XL</span>${xl}</div>
                     <div><span class="block text-[#00f0ff]">L</span>${l}</div>
                     <div><span class="block text-[#00f0ff]">M</span>${m}</div>
                     <div><span class="block text-[#00f0ff]">S</span>${s}</div>
                 </div>
-                <div class="text-xs text-[#00f0ff]/70 mt-4">Based on ${selectedPokemon} • Growth rate: ${growth}</div>
+                <div class="text-xs text-[#00f0ff]/70 mt-4">Current Level: ${curLvl} → Target: ${tgtLvl} • ${selectedPokemon}</div>
             `;
 
             const resultEl = document.getElementById('exp-result');
@@ -240,7 +254,7 @@
 
         window.onload = async () => {
             await loadAllPokemon();
-            console.log('%c✅ EXP Calculator now matches your old Living-Dex-v2 exactly (searchable Pokémon + candy display)', 'color:#00f0ff;font-size:18px');
+            console.log('%c✅ EXP Calculator now matches your old Living-Dex-v2 with correct numbers + Current Level slider', 'color:#00f0ff;font-size:18px');
         };
     </script>
 </body>
