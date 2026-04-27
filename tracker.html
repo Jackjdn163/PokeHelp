@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokéOS • Pokédex Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Press+Start+2P&amp;display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Press+Start+2P&amp;display=swap');
+        
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+        }
+        
+        .os-header {
+            background: linear-gradient(to right, #1f2937, #111827);
+            border-bottom: 3px solid #10b981;
+        }
+        
+        .pixel-font {
+            font-family: 'Press Start 2P', sans-serif;
+        }
+
+        .crt {
+            position: relative;
+        }
+        
+        .crt::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(
+                transparent 0px,
+                transparent 2px,
+                rgba(16, 185, 129, 0.04) 2px,
+                rgba(16, 185, 129, 0.04) 4px
+            );
+            pointer-events: none;
+            animation: crt-scan 10s linear infinite;
+        }
+
+        @keyframes crt-scan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(300%); }
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: linear-gradient(to right, #10b981, #34d399);
+            border-radius: 9999px;
+        }
+
+        .dex-card {
+            transition: all 0.2s ease;
+        }
+        .dex-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 0 3px #10b981;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col overflow-hidden">
+    <!-- Top OS Bar -->
+    <div class="os-header h-14 flex items-center px-6 text-white z-50">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-xl">⚪</div>
+            <div class="pixel-font text-xl tracking-widest text-emerald-400">POKÉOS</div>
+            <div class="text-xs text-emerald-500/70">TRACKER v1.0</div>
+        </div>
+        
+        <div class="flex-1 flex justify-center gap-8 text-sm">
+            <a onclick="switchTab(0)" class="tab-btn active px-5 py-2 cursor-pointer hover:text-emerald-400">HOME</a>
+            <a onclick="switchTab(1)" class="tab-btn px-5 py-2 cursor-pointer hover:text-emerald-400">TRACKER</a>
+            <a onclick="switchTab(2)" class="tab-btn px-5 py-2 cursor-pointer hover:text-emerald-400">POKÉDEX</a>
+        </div>
+        
+        <div class="flex items-center gap-4 text-xs">
+            <div class="bg-emerald-900 px-3 py-1 rounded">Trainer jack • NJ</div>
+            <div class="text-emerald-400">100% KANTO</div>
+        </div>
+    </div>
+
+    <div class="flex flex-1 overflow-hidden">
+        <!-- Sidebar -->
+        <div class="w-64 bg-zinc-950 border-r border-zinc-800 p-5 flex flex-col">
+            <div class="mb-6">
+                <div class="text-emerald-400 text-xs tracking-widest mb-2">CURRENT DEX</div>
+                <select id="dexSelect" onchange="changeDex()" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl p-3 text-sm">
+                    <option value="national">National Pokédex (All Forms)</option>
+                    <option value="kanto">Kanto (Gen 1)</option>
+                    <option value="paldea">Paldea (Gen 9)</option>
+                    <option value="pokopia">Pokopia (Custom)</option>
+                </select>
+            </div>
+
+            <div class="space-y-6">
+                <div>
+                    <div class="flex justify-between text-xs mb-2">
+                        <span class="text-emerald-400">OVERALL PROGRESS</span>
+                        <span id="overallPercent" class="font-mono">68%</span>
+                    </div>
+                    <div class="h-2 bg-zinc-800 rounded-full overflow-hidden">
+                        <div id="overallBar" class="progress-bar w-[68%]"></div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 text-center text-xs">
+                    <div class="bg-zinc-900 rounded-2xl p-4">
+                        <div class="text-emerald-400">CAUGHT</div>
+                        <div id="caughtCount" class="text-3xl font-mono mt-1">912</div>
+                    </div>
+                    <div class="bg-zinc-900 rounded-2xl p-4">
+                        <div class="text-yellow-400">SHINY</div>
+                        <div id="shinyCount" class="text-3xl font-mono mt-1">47</div>
+                    </div>
+                </div>
+
+                <div class="text-xs space-y-4">
+                    <div onclick="filterBy('all')" class="cursor-pointer flex justify-between hover:text-emerald-400">
+                        <span>All Pokémon</span><span class="font-mono text-emerald-400" id="allTotal">1025</span>
+                    </div>
+                    <div onclick="filterBy('caught')" class="cursor-pointer flex justify-between hover:text-emerald-400">
+                        <span>Caught</span><span class="font-mono" id="caughtTotal">912</span>
+                    </div>
+                    <div onclick="filterBy('shiny')" class="cursor-pointer flex justify-between hover:text-emerald-400">
+                        <span>Shiny</span><span class="font-mono text-yellow-400" id="shinyTotal">47</span>
+                    </div>
+                    <div onclick="filterBy('missing')" class="cursor-pointer flex justify-between hover:text-emerald-400">
+                        <span>Missing</span><span class="font-mono text-red-400" id="missingTotal">113</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-auto pt-8 text-[10px] text-zinc-500">
+                Last synced: just now<br>
+                Supports all regional forms + gender differences
+            </div>
+        </div>
+
+        <!-- Main Tracker Area -->
+        <div class="flex-1 p-8 overflow-auto crt" id="trackerContent">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex justify-between items-end mb-8">
+                    <div>
+                        <h1 class="pixel-font text-4xl text-emerald-400">POKÉDEX TRACKER</h1>
+                        <p class="text-zinc-400">National + All Forms • Live Progress</p>
+                    </div>
+                    
+                    <div class="flex items-center gap-4">
+                        <input id="searchInput" 
+                               onkeyup="filterTracker()"
+                               placeholder="Search Pokémon..." 
+                               class="bg-zinc-900 border border-zinc-700 rounded-2xl px-6 py-3 w-80 outline-none text-sm">
+                        
+                        <button onclick="toggleShinyMode()" 
+                                class="flex items-center gap-2 bg-zinc-900 hover:bg-yellow-900 border border-yellow-500/30 px-5 py-3 rounded-2xl">
+                            <span>✨</span>
+                            <span class="text-yellow-400 text-sm">Shiny Mode</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Row -->
+                <div class="grid grid-cols-4 gap-4 mb-8">
+                    <div class="bg-zinc-900 rounded-3xl p-5">
+                        <div class="text-xs text-emerald-400">COMPLETION</div>
+                        <div id="completionBig" class="text-6xl font-mono mt-2">68%</div>
+                    </div>
+                    <div class="bg-zinc-900 rounded-3xl p-5">
+                        <div class="text-xs text-emerald-400">FORMS TRACKED</div>
+                        <div class="text-6xl font-mono mt-2">1,284</div>
+                    </div>
+                    <div class="bg-zinc-900 rounded-3xl p-5">
+                        <div class="text-xs text-emerald-400">PERFECT IVs</div>
+                        <div class="text-6xl font-mono mt-2 text-sky-400">214</div>
+                    </div>
+                    <div class="bg-zinc-900 rounded-3xl p-5">
+                        <div class="text-xs text-emerald-400">ALPHA / SPECIAL</div>
+                        <div class="text-6xl font-mono mt-2 text-purple-400">31</div>
+                    </div>
+                </div>
+
+                <!-- Pokémon Grid -->
+                <div id="trackerGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-4">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="h-10 bg-zinc-950 border-t border-zinc-800 flex items-center px-8 text-xs text-zinc-500">
+        <div>PokéOS Tracker • All data from PokeAPI • Solo-friendly</div>
+        <div class="ml-auto flex gap-6">
+            <span onclick="markAllCaught()" class="cursor-pointer hover:text-emerald-400">MARK ALL CAUGHT</span>
+            <span onclick="resetTracker()" class="cursor-pointer hover:text-red-400">RESET PROGRESS</span>
+        </div>
+    </div>
+
+    <script>
+        let pokemonData = [];
+        let isShinyMode = false;
+        let currentFilter = 'all';
+
+        async function loadTrackerData() {
+            const grid = document.getElementById('trackerGrid');
+            grid.innerHTML = `<div class="col-span-full py-20 text-center text-emerald-400">Loading full tracker with all forms...</div>`;
+            
+            try {
+                const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1200');
+                const data = await res.json();
+                
+                const promises = data.results.slice(0, 400).map(async (p) => {
+                    const detailRes = await fetch(p.url);
+                    const detail = await detailRes.json();
+                    return {
+                        id: detail.id,
+                        name: detail.name,
+                        sprite: detail.sprites.other['official-artwork'].front_default || detail.sprites.front_default,
+                        types: detail.types.map(t => t.type.name),
+                        caught: Math.random() > 0.3,
+                        shiny: Math.random() > 0.85
+                    };
+                });
+                
+                pokemonData = await Promise.all(promises);
+                renderTracker(pokemonData);
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        function renderTracker(list) {
+            const grid = document.getElementById('trackerGrid');
+            grid.innerHTML = '';
+            
+            list.forEach(poke => {
+                const isCaught = poke.caught;
+                const isShinyCaught = poke.shiny && isCaught;
+                
+                const card = document.createElement('div');
+                card.className = `dex-card bg-zinc-900 border ${isCaught ? 'border-emerald-500' : 'border-zinc-700'} rounded-3xl overflow-hidden cursor-pointer`;
+                
+                card.innerHTML = `
+                    <div class="relative h-40 flex items-center justify-center bg-black/40">
+                        ${isCaught ? `
+                            <div class="absolute top-3 right-3 text-emerald-400 text-2xl">✓</div>
+                        ` : ''}
+                        ${isShinyCaught ? `
+                            <div class="absolute top-3 left-3 text-yellow-400 text-xl">✨</div>
+                        ` : ''}
+                        <img src="${poke.sprite}" class="max-h-36 drop-shadow-2xl ${!isCaught ? 'grayscale opacity-60' : ''}" alt="${poke.name}">
+                    </div>
+                    <div class="p-4">
+                        <div class="font-mono text-xs opacity-60">#${poke.id.toString().padStart(3, '0')}</div>
+                        <div class="capitalize text-lg font-medium">${poke.name.replace(/-/g, ' ')}</div>
+                        <div class="flex gap-1 mt-3">
+                            ${poke.types.map(t => `<span class="text-[10px] px-3 py-px bg-zinc-800 rounded-full">${t}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+                
+                card.onclick = () => {
+                    const newStatus = !poke.caught;
+                    poke.caught = newStatus;
+                    if (newStatus && Math.random() > 0.7) poke.shiny = true;
+                    renderTracker(getFilteredList());
+                    updateStats();
+                };
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function getFilteredList() {
+            let filtered = pokemonData;
+            
+            if (currentFilter === 'caught') {
+                filtered = filtered.filter(p => p.caught);
+            } else if (currentFilter === 'shiny') {
+                filtered = filtered.filter(p => p.shiny && p.caught);
+            } else if (currentFilter === 'missing') {
+                filtered = filtered.filter(p => !p.caught);
+            }
+            
+            return filtered;
+        }
+
+        function filterTracker() {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            let filtered = getFilteredList();
+            
+            if (term) {
+                filtered = filtered.filter(p => p.name.toLowerCase().includes(term));
+            }
+            
+            renderTracker(filtered);
+        }
+
+        function updateStats() {
+            const caught = pokemonData.filter(p => p.caught).length;
+            const shiny = pokemonData.filter(p => p.shiny && p.caught).length;
+            const percent = Math.round((caught / pokemonData.length) * 100);
+            
+            document.getElementById('overallPercent').textContent = percent + '%';
+            document.getElementById('overallBar').style.width = percent + '%';
+            document.getElementById('completionBig').textContent = percent + '%';
+            document.getElementById('caughtCount').textContent = caught;
+            document.getElementById('shinyCount').textContent = shiny;
+        }
+
+        function toggleShinyMode() {
+            isShinyMode = !isShinyMode;
+            alert(isShinyMode ? "Shiny Mode ON ✨ (only shiny caught show highlighted)" : "Shiny Mode OFF");
+            renderTracker(getFilteredList());
+        }
+
+        function filterBy(mode) {
+            currentFilter = mode;
+            renderTracker(getFilteredList());
+        }
+
+        function changeDex() {
+            alert("Switching Pokédex... (National + all regional forms loaded)");
+            loadTrackerData();
+        }
+
+        function markAllCaught() {
+            if (confirm("Mark ALL as caught?")) {
+                pokemonData.forEach(p => p.caught = true);
+                renderTracker(getFilteredList());
+                updateStats();
+            }
+        }
+
+        function resetTracker() {
+            if (confirm("Reset all progress?")) {
+                pokemonData.forEach(p => { p.caught = false; p.shiny = false; });
+                renderTracker(getFilteredList());
+                updateStats();
+            }
+        }
+
+        function switchTab(n) {
+            alert(`Switched to tab ${n} (Tracker is the main focus here)`);
+        }
+
+        window.onload = () => {
+            loadTrackerData();
+            setTimeout(updateStats, 800);
+        };
+    </script>
+</body>
+</html>
