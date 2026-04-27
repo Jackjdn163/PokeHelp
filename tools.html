@@ -84,34 +84,27 @@
             <button onclick="openTool(2)" id="tab-2" class="tab-button px-10 py-4 text-lg font-medium">Shiny Probability</button>
         </div>
 
-        <!-- EXP CALCULATOR – Matches your old Living-Dex-v2 + Current Level Slider -->
+        <!-- EXP CALCULATOR – Uses PokePC first, falls back to PokeAPI only when needed -->
         <div id="panel-0" class="tool-panel active">
             <div class="bg-[#111827] rounded-3xl p-8 max-w-2xl">
                 <h3 class="text-2xl font-semibold mb-6">EXP Calculator • All Switch Games</h3>
 
-                <!-- Pokémon Search -->
                 <div class="mb-8">
                     <label class="block text-sm mb-2">Search &amp; Select Pokémon</label>
                     <div class="relative">
-                        <input id="pokemon-search" 
-                               placeholder="Type to search any Pokémon..."
-                               class="styled-input"
-                               onkeyup="filterPokemonList()">
+                        <input id="pokemon-search" placeholder="Type to search any Pokémon..." class="styled-input" onkeyup="filterPokemonList()">
                         <div id="pokemon-list" class="search-results hidden absolute w-full mt-1 z-50"></div>
                     </div>
                 </div>
 
-                <!-- Current Level Slider -->
                 <div class="mb-8">
                     <div class="flex justify-between text-sm mb-2">
                         <label>Current Level</label>
                         <span id="current-level-display" class="font-semibold text-[#00f0ff]">50</span>
                     </div>
-                    <input type="range" id="current-level-slider" min="1" max="100" value="50" 
-                           oninput="updateLevelDisplay()" class="w-full accent-[#00f0ff]">
+                    <input type="range" id="current-level-slider" min="1" max="100" value="50" oninput="updateLevelDisplay()" class="w-full accent-[#00f0ff]">
                 </div>
 
-                <!-- Target Options -->
                 <div class="mb-8">
                     <label class="block text-sm mb-2">Target</label>
                     <div class="flex gap-3">
@@ -127,7 +120,7 @@
             </div>
         </div>
 
-        <!-- Other tools (placeholders) -->
+        <!-- Other tools -->
         <div id="panel-1" class="tool-panel">IV/EV/Stat content here</div>
         <div id="panel-2" class="tool-panel">Shiny Probability content here</div>
     </div>
@@ -135,16 +128,9 @@
     <script>
         let allPokemon = [];
         let selectedPokemon = null;
-        let targetMode = 0; // 0 = Lv100, 1 = Next Level, 2 = Evolution
-
-        // Accurate growth rate mapping (same as your old site)
-        const growthRates = {
-            "Pikachu": "medium-fast", "Raichu": "medium-fast",
-            "Charizard": "medium-slow", "Garchomp": "slow",
-            "Lucario": "medium-slow", "Iron Valiant": "slow",
-            "Annihilape": "medium", "Archaludon": "medium",
-            "Terapagos": "slow", "Tyranitar": "slow",
-        };
+        let selectedGrowthRate = "medium-fast";
+        let nextEvolutionLevel = null;
+        let targetMode = 0;
 
         async function loadAllPokemon() {
             const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1302');
@@ -167,14 +153,35 @@
                 const div = document.createElement('div');
                 div.className = "px-6 py-4 hover:bg-[#00f0ff]/10 cursor-pointer flex items-center gap-3";
                 div.innerHTML = `<span class="text-[#00f0ff]">#${p.id}</span><span>${p.name}</span>`;
-                div.onclick = () => {
-                    selectedPokemon = p.name;
-                    document.getElementById('pokemon-search').value = p.name;
-                    container.classList.add('hidden');
-                };
+                div.onclick = () => selectPokemon(p.name, p.id);
                 container.appendChild(div);
             });
             container.classList.toggle('hidden', filtered.length === 0);
+        }
+
+        async function selectPokemon(name, id) {
+            selectedPokemon = name;
+            document.getElementById('pokemon-search').value = name;
+            document.getElementById('pokemon-list').classList.add('hidden');
+
+            // 1. Prefer PokePC repository
+            try {
+                const pokePCRes = await fetch(`https://raw.githubusercontent.com/pokepc/dataset/main/data/pokemon/${name.toLowerCase()}.json`);
+                if (pokePCRes.ok) {
+                    const pcData = await pokePCRes.json();
+                    // Use PokePC evolution level if available
+                    if (pcData.evoFromLevel) nextEvolutionLevel = pcData.evoFromLevel;
+                }
+            } catch(e) {}
+
+            // 2. Fall back to PokeAPI for growth rate (PokePC doesn't have it)
+            try {
+                const speciesRes = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`);
+                const species = await speciesRes.json();
+                selectedGrowthRate = species.growth_rate.name;
+            } catch(e) {
+                selectedGrowthRate = "medium-fast";
+            }
         }
 
         function updateLevelDisplay() {
@@ -192,11 +199,16 @@
 
         function getCumulativeEXP(level, growth) {
             if (level <= 1) return 0;
-            if (growth === "fast") return Math.floor(0.8 * Math.pow(level, 3));
-            if (growth === "medium-fast") return Math.floor(Math.pow(level, 3));
-            if (growth === "medium-slow") return Math.floor(1.2 * Math.pow(level, 3) - 15 * level * level + 100 * level - 140);
-            if (growth === "slow") return Math.floor(1.25 * Math.pow(level, 3));
-            return Math.floor(Math.pow(level, 3)); // default
+            let exp = 0;
+            if (growth === "fast") exp = Math.floor(0.8 * Math.pow(level, 3));
+            else if (growth === "medium-fast") exp = Math.floor(Math.pow(level, 3));
+            else if (growth === "medium") exp = Math.floor(Math.pow(level, 3));
+            else if (growth === "medium-slow") exp = Math.floor(1.2 * Math.pow(level, 3) - 15 * level * level + 100 * level - 140);
+            else if (growth === "slow") exp = Math.floor(1.25 * Math.pow(level, 3));
+            else if (growth === "erratic") exp = Math.floor(0.9 * Math.pow(level, 3));
+            else if (growth === "fluctuating") exp = Math.floor(1.1 * Math.pow(level, 3));
+            else exp = Math.floor(Math.pow(level, 3));
+            return exp;
         }
 
         function calculateEXP() {
@@ -208,14 +220,20 @@
             const curLvl = parseInt(document.getElementById('current-level-slider').value) || 1;
             let tgtLvl = 100;
 
-            if (targetMode === 1) tgtLvl = curLvl + 1;           // Until Next Level
-            else if (targetMode === 2) tgtLvl = curLvl + 5;      // Until Evolution (placeholder)
+            if (targetMode === 1) tgtLvl = curLvl + 1;
+            else if (targetMode === 2) {
+                if (nextEvolutionLevel && nextEvolutionLevel > curLvl) {
+                    tgtLvl = nextEvolutionLevel;
+                } else {
+                    const resultEl = document.getElementById('exp-result');
+                    resultEl.classList.remove('hidden');
+                    resultEl.innerHTML = `<div class="text-3xl font-semibold text-[#00f0ff]">Fully evolved or no level-based evolution for ${selectedPokemon}</div>`;
+                    return;
+                }
+            }
 
-            const growth = growthRates[selectedPokemon] || "medium-fast";
+            const totalNeeded = getCumulativeEXP(tgtLvl, selectedGrowthRate) - getCumulativeEXP(curLvl, selectedGrowthRate);
 
-            const totalNeeded = getCumulativeEXP(tgtLvl, growth) - getCumulativeEXP(curLvl, growth);
-
-            // Candy breakdown (Scarlet/Violet values)
             const xl = Math.floor(totalNeeded / 10000);
             const l = Math.floor((totalNeeded % 10000) / 3000);
             const m = Math.floor((totalNeeded % 3000) / 800);
@@ -254,7 +272,7 @@
 
         window.onload = async () => {
             await loadAllPokemon();
-            console.log('%c✅ EXP Calculator now matches your old Living-Dex-v2 with correct numbers + Current Level slider', 'color:#00f0ff;font-size:18px');
+            console.log('%c✅ tools.html updated – PokePC first for evolution + PokeAPI fallback only when needed', 'color:#00f0ff;font-size:18px');
         };
     </script>
 </body>
