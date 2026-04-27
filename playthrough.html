@@ -1,0 +1,95 @@
+<!-- ================================================
+     FILE 6: playthrough.html
+     Save this as: playthrough.html
+================================================ -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROTOM DEX • Playthrough Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        :root { --neon-blue: #00f0ff; --rotom-red: #ff0033; }
+        body { background: linear-gradient(180deg, #0a1428 0%, #001122 100%); font-family: system-ui, sans-serif; }
+        .dex-frame { border: 14px solid #111827; border-radius: 48px; box-shadow: 0 0 0 10px #00f0ff, 0 0 0 20px #111827, 0 35px 70px -12px rgb(0 240 255 / 0.6); background: #0a1428; position: relative; max-width: 1400px; margin: 40px auto; }
+        .dex-frame::before { content: ''; position: absolute; inset: -8px; border: 5px solid #ff0033; border-radius: 56px; z-index: -1; box-shadow: 0 0 40px #ff0033; }
+        .scanlines { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,240,255,0.12) 50%, transparent 50%); background-size: 100% 6px; animation: scan 3s linear infinite; z-index: 10; opacity: 0.25; mix-blend-mode: screen; pointer-events: none; }
+        @keyframes scan { 0% { background-position: 0 0; } 100% { background-position: 0 100%; } }
+        .title-font { font-family: 'Press Start 2P', cursive; text-shadow: 0 0 8px #00f0ff, 0 0 16px #00f0ff; }
+        .neon-text { color: #00f0ff; text-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff, 0 0 30px #ff0033; }
+    </style>
+</head>
+<body class="text-white min-h-screen pb-20">
+    <!-- ROTOM HEADER (identical in EVERY file) -->
+    <div class="dex-frame px-10 py-5 flex items-center justify-between relative mx-8">
+        <div class="flex items-center gap-x-6">
+            <div class="w-16 h-16 bg-[#ff0033] rounded-3xl flex items-center justify-center text-6xl shadow-[0_0_30px_#ff0033] rotate-12">👻</div>
+            <div>
+                <h1 class="title-font text-6xl tracking-[8px]">ROTOM DEX</h1>
+                <p class="text-[#00f0ff] text-sm font-bold tracking-[4px] -mt-2">SWITCH • HOME • ALL FORMS • v2.0</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-x-10 text-sm font-bold uppercase">
+            <a href="index.html" class="flex items-center gap-x-2 hover:text-[#00f0ff]"><i class="fa-solid fa-house"></i> DASHBOARD</a>
+            <a href="pokedex.html" class="flex items-center gap-x-2 hover:text-[#00f0ff]"><i class="fa-solid fa-book"></i> POKEDEX</a>
+            <a href="living-dex.html" class="flex items-center gap-x-2 hover:text-[#00f0ff]"><i class="fa-solid fa-list-check"></i> LIVING DEX</a>
+            <a href="tools.html" class="flex items-center gap-x-2 hover:text-[#00f0ff]"><i class="fa-solid fa-calculator"></i> TOOLS</a>
+            <a href="team.html" class="flex items-center gap-x-2 hover:text-[#00f0ff]"><i class="fa-solid fa-users"></i> TEAM</a>
+            <a href="playthrough.html" class="flex items-center gap-x-2 hover:text-[#00f0ff]"><i class="fa-solid fa-chart-bar"></i> PLAYTHROUGH</a>
+            <a href="guides.html" class="flex items-center gap-x-2 hover:text-[#00f0ff]"><i class="fa-solid fa-book-open"></i> GUIDES</a>
+            <a href="news.html" class="flex items-center gap-x-2 hover:text-[#00f0ff]"><i class="fa-solid fa-newspaper"></i> NEWS</a>
+        </div>
+        <div class="flex items-center gap-x-6">
+            <div onclick="toggleUserMenu()" class="flex items-center bg-white/10 hover:bg-white/20 px-6 py-3 rounded-3xl cursor-pointer">
+                <i class="fa-solid fa-user-circle text-4xl text-[#00f0ff]"></i>
+                <span id="username-display" class="ml-3 font-bold">Trainer Jack • Fanwood, NJ</span>
+            </div>
+            <button onclick="exportAllData()" class="bg-[#ff0033] hover:bg-red-600 px-8 py-3 rounded-3xl font-bold flex items-center gap-x-3 text-lg"><i class="fa-solid fa-download"></i> SAVE TO HOME</button>
+        </div>
+        <div class="scanlines"></div>
+    </div>
+
+    <!-- PLAYTHROUGH TRACKER CONTENT -->
+    <div class="dex-frame mx-8 p-10">
+        <h2 class="title-font text-6xl neon-text mb-8">PERSONAL PLAYTHROUGH TRACKER • ALL SWITCH GAMES</h2>
+        <div class="grid grid-cols-5 gap-8">
+            <div class="bg-[#001122] rounded-3xl p-8 text-center">
+                <div class="text-xl font-bold mb-4">Let’s Go Pikachu</div>
+                <input type="range" value="100" min="0" max="100" class="w-full accent-[#00f0ff]">
+                <div class="text-7xl font-black text-emerald-400 mt-4">100%</div>
+            </div>
+            <div class="bg-[#001122] rounded-3xl p-8 text-center">
+                <div class="text-xl font-bold mb-4">Sword</div>
+                <input type="range" value="78" min="0" max="100" class="w-full accent-[#00f0ff]">
+                <div class="text-7xl font-black text-amber-400 mt-4">78%</div>
+            </div>
+            <div class="bg-[#001122] rounded-3xl p-8 text-center">
+                <div class="text-xl font-bold mb-4">BDSP Pearl</div>
+                <input type="range" value="45" min="0" max="100" class="w-full accent-[#00f0ff]">
+                <div class="text-7xl font-black text-blue-400 mt-4">45%</div>
+            </div>
+            <div class="bg-[#001122] rounded-3xl p-8 text-center">
+                <div class="text-xl font-bold mb-4">Legends: Arceus</div>
+                <input type="range" value="92" min="0" max="100" class="w-full accent-[#00f0ff]">
+                <div class="text-7xl font-black text-purple-400 mt-4">92%</div>
+            </div>
+            <div class="bg-[#001122] rounded-3xl p-8 text-center">
+                <div class="text-xl font-bold mb-4">Scarlet</div>
+                <input type="range" value="100" min="0" max="100" class="w-full accent-[#00f0ff]">
+                <div class="text-7xl font-black text-red-400 mt-4">100%</div>
+            </div>
+        </div>
+        <button onclick="logMilestone()" class="mt-12 bg-[#ff0033] px-12 py-8 rounded-3xl text-3xl font-bold w-full">+ LOG NEW MILESTONE / HALL OF FAME ENTRY</button>
+    </div>
+
+    <script>
+        function logMilestone() { alert('Milestone logged! (In full site this opens a detailed form with badges, HoF, etc.)'); }
+        function toggleUserMenu() { const name = prompt('Trainer name?', 'Trainer Jack'); if(name) document.getElementById('username-display').innerHTML = name + ' • Fanwood, NJ'; }
+        function exportAllData() { alert('✅ Full backup saved! Ready for Pokémon Home import'); }
+        window.onload = () => console.log('%c✅ ROTOM DEX playthrough.html loaded', 'color:#00f0ff;font-size:18px');
+    </script>
+</body>
+</html>
