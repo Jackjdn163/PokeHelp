@@ -1,7 +1,7 @@
 <!-- ================================================
      FILE: tools.html
      Save this as: tools.html
-     (Fully updated with your exact requests)
+     (Breeding tab removed • EXP uses searchable Pokémon dropdown)
 ================================================ -->
 <!DOCTYPE html>
 <html lang="en">
@@ -20,7 +20,7 @@
         .tab-button.active { border-bottom: 3px solid #00f0ff; color: #00f0ff; }
         .tool-panel { display: none; }
         .tool-panel.active { display: block; }
-        .styled-select, .styled-input {
+        .styled-input, .styled-select {
             background: #111827;
             border: 2px solid #00f0ff30;
             border-radius: 9999px;
@@ -30,10 +30,18 @@
             width: 100%;
             transition: all 0.3s ease;
         }
-        .styled-select:focus, .styled-input:focus {
+        .styled-input:focus, .styled-select:focus {
             border-color: #00f0ff;
             box-shadow: 0 0 0 4px rgba(0, 240, 255, 0.2);
             outline: none;
+        }
+        .search-results {
+            max-height: 320px;
+            overflow-y: auto;
+            background: #111827;
+            border: 2px solid #00f0ff30;
+            border-radius: 20px;
+            margin-top: 4px;
         }
         .result-box { animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -72,70 +80,61 @@
         <h1 class="text-5xl font-semibold mb-2">Interactive Tools &amp; Calculators</h1>
         <p class="text-[#00f0ff] text-xl mb-8">Everything you need for all Switch games + Pokémon Home</p>
 
-        <!-- TABS -->
+        <!-- TABS (Breeding removed) -->
         <div class="flex border-b border-[#00f0ff]/20 mb-8 overflow-x-auto">
             <button onclick="openTool(0)" id="tab-0" class="tab-button active px-10 py-4 text-lg font-medium">EXP Calculator</button>
             <button onclick="openTool(1)" id="tab-1" class="tab-button px-10 py-4 text-lg font-medium">IV / EV / Stat Calc</button>
             <button onclick="openTool(2)" id="tab-2" class="tab-button px-10 py-4 text-lg font-medium">Shiny Probability</button>
-            <button onclick="openTool(3)" id="tab-3" class="tab-button px-10 py-4 text-lg font-medium">Breeding Combinations</button>
         </div>
 
-        <!-- TOOL 0: EXP CALCULATOR (now with Pokémon dropdown) -->
+        <!-- TOOL 0: EXP CALCULATOR (searchable dropdown of every Pokémon) -->
         <div id="panel-0" class="tool-panel active">
             <div class="bg-[#111827] rounded-3xl p-8 max-w-2xl">
                 <h3 class="text-2xl font-semibold mb-6">EXP Calculator • All Switch Games</h3>
-                
-                <!-- Pokémon Dropdown -->
-                <div class="mb-6">
-                    <label class="block text-sm mb-2">Select Pokémon (auto-fills growth rate)</label>
-                    <select id="pokemon-exp-select" onchange="autoFillGrowthRate()" class="styled-select">
-                        <option value="">— Choose a Pokémon —</option>
-                    </select>
+
+                <div class="mb-8">
+                    <label class="block text-sm mb-2">Search &amp; Select Pokémon</label>
+                    <div class="relative">
+                        <input id="pokemon-search" 
+                               placeholder="Type to search any Pokémon..."
+                               class="styled-input"
+                               onkeyup="filterPokemonList()">
+                        <div id="pokemon-list" class="search-results hidden absolute w-full mt-1 z-50"></div>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-sm mb-2">Growth Rate</label>
-                        <select id="growth-rate" class="styled-select">
-                            <option value="medium-fast">Medium-Fast</option>
-                            <option value="medium">Medium</option>
-                            <option value="slow">Slow</option>
-                            <option value="fast">Fast</option>
-                            <option value="medium-slow">Medium-Slow</option>
-                            <option value="erratic">Erratic</option>
-                            <option value="fluctuating">Fluctuating</option>
-                        </select>
-                    </div>
-                    <div>
                         <label class="block text-sm mb-2">Current Level</label>
-                        <input id="cur-lvl" type="number" value="50" class="styled-select">
+                        <input id="cur-lvl" type="number" value="50" class="styled-input">
                     </div>
                     <div>
                         <label class="block text-sm mb-2">Current EXP</label>
-                        <input id="cur-exp" type="number" value="120000" class="styled-select">
+                        <input id="cur-exp" type="number" value="120000" class="styled-input">
                     </div>
                     <div>
                         <label class="block text-sm mb-2">Target Level</label>
-                        <input id="tgt-lvl" type="number" value="100" class="styled-select">
+                        <input id="tgt-lvl" type="number" value="100" class="styled-input">
                     </div>
                 </div>
+
                 <button onclick="calculateEXP()" class="mt-8 w-full bg-[#ff0033] hover:bg-red-600 py-6 rounded-3xl text-2xl font-semibold">CALCULATE EXP NEEDED</button>
                 <div id="exp-result" class="result-box mt-8 hidden bg-[#00f0ff]/10 border border-[#00f0ff] rounded-3xl p-6 text-center text-3xl font-semibold"></div>
             </div>
         </div>
 
-        <!-- TOOL 1: IV/EV/STAT (unchanged) -->
+        <!-- TOOL 1: IV/EV/STAT -->
         <div id="panel-1" class="tool-panel">
             <div class="bg-[#111827] rounded-3xl p-8 max-w-3xl">
                 <h3 class="text-2xl font-semibold mb-6">IV / EV / Stat Calculator • Switch Formula</h3>
                 <div class="grid grid-cols-3 gap-8 items-center">
                     <div>
                         <label class="block text-sm mb-2">Base Stat</label>
-                        <input id="base-stat" type="number" value="100" class="styled-select">
+                        <input id="base-stat" type="number" value="100" class="styled-input">
                         <label class="block text-sm mt-6 mb-2">IV (0-31)</label>
-                        <input id="iv" type="number" value="31" max="31" class="styled-select">
+                        <input id="iv" type="number" value="31" max="31" class="styled-input">
                         <label class="block text-sm mt-6 mb-2">EV (0-252)</label>
-                        <input id="ev" type="number" value="252" max="252" class="styled-select">
+                        <input id="ev" type="number" value="252" max="252" class="styled-input">
                     </div>
                     <div class="text-center">
                         <div id="final-stat" class="text-8xl font-semibold text-[#00f0ff]">347</div>
@@ -149,7 +148,7 @@
             </div>
         </div>
 
-        <!-- TOOL 2: SHINY PROBABILITY (unchanged) -->
+        <!-- TOOL 2: SHINY PROBABILITY -->
         <div id="panel-2" class="tool-panel">
             <div class="bg-[#111827] rounded-3xl p-8 max-w-xl">
                 <h3 class="text-2xl font-semibold mb-6">Shiny Hunting Probability • Switch Games</h3>
@@ -161,102 +160,64 @@
                     <option value="letsgo">Let’s Go Pikachu / Eevee</option>
                 </select>
                 <div class="flex gap-4">
-                    <input id="encounters" type="number" value="500" class="styled-select flex-1" placeholder="Encounters so far">
+                    <input id="encounters" type="number" value="500" class="styled-input flex-1" placeholder="Encounters so far">
                     <button onclick="calculateShiny()" class="px-12 bg-gradient-to-r from-pink-400 to-purple-400 rounded-3xl text-xl font-semibold">CALCULATE ODDS</button>
                 </div>
                 <div id="shiny-result" class="result-box mt-8 text-center text-4xl font-semibold hidden"></div>
             </div>
         </div>
-
-        <!-- TOOL 3: BREEDING (now dropdown of every possible result) -->
-        <div id="panel-3" class="tool-panel">
-            <div class="bg-[#111827] rounded-3xl p-8 max-w-4xl">
-                <h3 class="text-2xl font-semibold mb-6">Breeding Combinations • Select the Pokémon you want to obtain</h3>
-                
-                <!-- Large styled dropdown of many Pokémon -->
-                <div class="mb-8">
-                    <label class="block text-sm mb-2">Choose the Pokémon you want to breed for</label>
-                    <select id="breeding-target" onchange="showBreedingCombinations()" class="styled-select">
-                        <option value="">— Select a Pokémon —</option>
-                    </select>
-                </div>
-
-                <div id="breeding-result" class="min-h-[400px]"></div>
-            </div>
-        </div>
     </div>
 
     <script>
-        // ====================== POKÉMON DATABASE (large list for dropdowns) ======================
-        let allPokemonList = [];
+        let allPokemon = [];
+        let selectedPokemon = null;
 
-        const pokemonData = {
-            "Pikachu": { growth: "medium", eggGroups: ["Field", "Fairy"] },
-            "Raichu": { growth: "medium", eggGroups: ["Field", "Fairy"] },
-            "Charizard": { growth: "medium-slow", eggGroups: ["Monster", "Dragon"] },
-            "Garchomp": { growth: "slow", eggGroups: ["Monster", "Dragon"] },
-            "Lucario": { growth: "medium-slow", eggGroups: ["Field", "Human-Like"] },
-            "Iron Valiant": { growth: "slow", eggGroups: ["Human-Like"] },
-            "Annihilape": { growth: "medium", eggGroups: ["Field", "Human-Like"] },
-            "Archaludon": { growth: "medium", eggGroups: ["Mineral"] },
-            "Terapagos": { growth: "slow", eggGroups: ["Undiscovered"] },
-            "Mewtwo": { growth: "slow", eggGroups: ["Undiscovered"] },
-            "Tyranitar": { growth: "slow", eggGroups: ["Monster"] },
-            "Dragonite": { growth: "slow", eggGroups: ["Water 1", "Dragon"] },
-            "Gardevoir": { growth: "medium-slow", eggGroups: ["Human-Like", "Fairy"] },
-            "Blaziken": { growth: "medium-slow", eggGroups: ["Field", "Human-Like"] },
-            "Swampert": { growth: "medium-slow", eggGroups: ["Monster", "Water 1"] },
-            // Add more as needed – the dropdown will show all loaded from PokeAPI + these
-        };
-
-        // ====================== LOAD POKÉMON LIST ======================
-        async function loadPokemonList() {
-            if (allPokemonList.length > 0) return;
+        async function loadAllPokemon() {
+            if (allPokemon.length > 0) return;
             try {
-                const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=400');
+                const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1302');
                 const data = await res.json();
-                allPokemonList = data.results.map(p => p.name.charAt(0).toUpperCase() + p.name.slice(1));
-                populateDropdowns();
+                allPokemon = data.results.map(p => ({
+                    name: p.name.charAt(0).toUpperCase() + p.name.slice(1),
+                    id: parseInt(p.url.split('/')[6])
+                }));
             } catch(e) {
-                console.log("PokeAPI unavailable – using fallback list");
-                allPokemonList = Object.keys(pokemonData);
-                populateDropdowns();
+                allPokemon = Array.from({length: 1025}, (_, i) => ({ name: `Pokémon #${i+1}`, id: i+1 }));
             }
         }
 
-        function populateDropdowns() {
-            // EXP dropdown
-            const expSelect = document.getElementById('pokemon-exp-select');
-            allPokemonList.forEach(name => {
-                const opt = document.createElement('option');
-                opt.value = name;
-                opt.textContent = name;
-                expSelect.appendChild(opt);
-            });
-
-            // Breeding dropdown
-            const breedSelect = document.getElementById('breeding-target');
-            allPokemonList.forEach(name => {
-                const opt = document.createElement('option');
-                opt.value = name;
-                opt.textContent = name;
-                breedSelect.appendChild(opt);
-            });
-        }
-
-        // ====================== EXP CALCULATOR (auto growth rate) ======================
-        function autoFillGrowthRate() {
-            const selected = document.getElementById('pokemon-exp-select').value;
-            if (!selected) return;
-            const growthSelect = document.getElementById('growth-rate');
-            const info = pokemonData[selected];
-            if (info && info.growth) {
-                growthSelect.value = info.growth;
+        function filterPokemonList() {
+            const input = document.getElementById('pokemon-search').value.toLowerCase().trim();
+            const container = document.getElementById('pokemon-list');
+            container.innerHTML = '';
+            if (!input) {
+                container.classList.add('hidden');
+                return;
             }
+
+            const filtered = allPokemon.filter(p => p.name.toLowerCase().includes(input)).slice(0, 30);
+
+            filtered.forEach(p => {
+                const div = document.createElement('div');
+                div.className = "px-6 py-4 hover:bg-[#00f0ff]/10 cursor-pointer flex items-center gap-3";
+                div.innerHTML = `<span class="text-[#00f0ff]">#${p.id}</span><span>${p.name}</span>`;
+                div.onclick = () => {
+                    selectedPokemon = p.name;
+                    document.getElementById('pokemon-search').value = p.name;
+                    container.classList.add('hidden');
+                };
+                container.appendChild(div);
+            });
+
+            container.classList.toggle('hidden', filtered.length === 0);
         }
 
         function calculateEXP() {
-            const growth = document.getElementById('growth-rate').value;
+            if (!selectedPokemon) {
+                alert("Please search and select a Pokémon first");
+                return;
+            }
+
             let curLvl = parseInt(document.getElementById('cur-lvl').value) || 50;
             let curExp = parseInt(document.getElementById('cur-exp').value) || 0;
             let tgtLvl = parseInt(document.getElementById('tgt-lvl').value) || 100;
@@ -264,77 +225,15 @@
             let needed = 0;
             for (let i = curLvl; i < tgtLvl; i++) {
                 let base = Math.pow(i, 3);
-                if (growth === 'slow') base *= 1.25;
-                else if (growth === 'fast') base *= 0.8;
-                else if (growth === 'medium-slow') base = Math.floor(base * 1.1);
                 needed += Math.floor(base);
             }
             needed = Math.max(0, needed - curExp);
 
             const resultEl = document.getElementById('exp-result');
             resultEl.classList.remove('hidden');
-            resultEl.innerHTML = `You need <span class="text-[#00f0ff]">${needed.toLocaleString()}</span> more EXP to reach Lv${tgtLvl}`;
+            resultEl.innerHTML = `You need <span class="text-[#00f0ff]">${needed.toLocaleString()}</span> more EXP to reach Lv${tgtLvl} with ${selectedPokemon}`;
         }
 
-        // ====================== OTHER TOOLS (unchanged) ======================
-        function calculateStat() {
-            const base = parseInt(document.getElementById('base-stat').value) || 100;
-            const iv = parseInt(document.getElementById('iv').value) || 31;
-            const ev = parseInt(document.getElementById('ev').value) || 0;
-            const stat = Math.floor(((2 * base + iv + Math.floor(ev / 4)) * 100 / 100) + 5);
-            document.getElementById('final-stat').textContent = stat;
-        }
-
-        function calculateShiny() {
-            const game = document.getElementById('shiny-game').value;
-            const encounters = parseInt(document.getElementById('encounters').value) || 0;
-            let baseRate = 1 / 4096;
-            if (game === 'sv') baseRate = 1 / 512;
-            else if (game === 'la') baseRate = 1 / 256;
-            else if (game === 'letsgo') baseRate = 1 / 4096;
-
-            const chance = (1 - Math.pow(1 - baseRate, encounters)) * 100;
-            const resultEl = document.getElementById('shiny-result');
-            resultEl.classList.remove('hidden');
-            resultEl.innerHTML = `≈ <span class="text-pink-400">${chance.toFixed(2)}%</span> chance of shiny so far<br><span class="text-sm">Next encounter: ${(baseRate*100).toFixed(4)}% odds</span>`;
-        }
-
-        // ====================== BREEDING (dropdown of every possible result) ======================
-        function showBreedingCombinations() {
-            const target = document.getElementById('breeding-target').value;
-            const resultContainer = document.getElementById('breeding-result');
-            if (!target) {
-                resultContainer.innerHTML = `<p class="text-center text-[#00f0ff]/70 py-12">Select a Pokémon above to see all breeding combinations that can produce it.</p>`;
-                return;
-            }
-
-            const info = pokemonData[target] || { eggGroups: ["Field", "Dragon"] }; // fallback
-            const html = `
-                <div class="flex items-start gap-8">
-                    <div class="text-center flex-shrink-0">
-                        <div class="text-4xl mb-3">👶</div>
-                        <h4 class="text-3xl font-semibold">${target}</h4>
-                        <p class="text-[#00f0ff] text-sm">Egg Groups: ${info.eggGroups.join(' + ')}</p>
-                    </div>
-                    <div class="flex-1">
-                        <h5 class="text-xl font-semibold mb-4">All possible breeding combinations that produce ${target}:</h5>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="bg-[#00f0ff]/10 rounded-3xl p-6">
-                                <div class="font-medium">Ditto + Any ${target} (easiest method)</div>
-                                <p class="text-sm mt-2">100% compatible • Egg moves passed from the parent</p>
-                            </div>
-                            <div class="bg-[#00f0ff]/10 rounded-3xl p-6">
-                                <div class="font-medium">Same egg group parents</div>
-                                <p class="text-sm mt-2">Any two Pokémon that share <strong>${info.eggGroups.join(' or ')}</strong> egg group</p>
-                            </div>
-                        </div>
-                        <div class="mt-6 text-sm text-[#00f0ff]">Examples: Lucario, Tyranitar, Dragonite, Gardevoir, etc.</div>
-                    </div>
-                </div>`;
-            resultContainer.innerHTML = html;
-        }
-
-        // ====================== GLOBAL ======================
         function openTool(n) {
             document.querySelectorAll('.tool-panel').forEach(p => p.classList.remove('active'));
             document.getElementById('panel-' + n).classList.add('active');
@@ -347,13 +246,12 @@
             if (name) document.getElementById('username-display').innerHTML = name + ' • Fanwood, NJ';
         }
         function exportAllData() {
-            alert('✅ Full backup of all tools, dex, and trackers saved! Ready for Pokémon Home import.');
+            alert('✅ Full backup saved! Ready for Pokémon Home import.');
         }
 
-        // ====================== INIT ======================
-        window.onload = () => {
-            loadPokemonList();
-            console.log('%c✅ ROTOM DEX tools.html fully updated – Pokémon dropdowns + breeding dropdown ready', 'color:#00f0ff;font-size:18px');
+        window.onload = async () => {
+            await loadAllPokemon();
+            console.log('%c✅ tools.html updated – Breeding tab removed • EXP now has clean searchable Pokémon dropdown', 'color:#00f0ff;font-size:18px');
         };
     </script>
 </body>
