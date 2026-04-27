@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokéOS • Solo Trainer Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Press+Start+2P&amp;display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Press+Start+2P&amp;display=swap');
+        
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+        }
+        
+        .os-header {
+            background: linear-gradient(to right, #1f2937, #111827);
+            border-bottom: 3px solid #10b981;
+        }
+        
+        .pixel-font {
+            font-family: 'Press Start 2P', sans-serif;
+        }
+
+        .pokedex-grid {
+            scrollbar-width: thin;
+            scrollbar-color: #10b981 #1f2937;
+        }
+
+        .pokemon-card {
+            transition: all 0.2s ease;
+        }
+        
+        .pokemon-card:hover {
+            transform: scale(1.04);
+            box-shadow: 0 0 0 4px #10b981;
+        }
+
+        .crt {
+            position: relative;
+        }
+        
+        .crt::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(
+                transparent 0px,
+                transparent 2px,
+                rgba(16, 185, 129, 0.03) 2px,
+                rgba(16, 185, 129, 0.03) 4px
+            );
+            pointer-events: none;
+            animation: crt-scan 8s linear infinite;
+        }
+
+        @keyframes crt-scan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col overflow-hidden">
+    <!-- Top OS Bar -->
+    <div class="os-header h-14 flex items-center px-6 text-white z-50">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-xl shadow-inner">⚪</div>
+            <div class="pixel-font text-xl tracking-widest text-emerald-400">POKÉOS</div>
+            <div class="text-xs text-emerald-500/70 ml-2">SOLO v1.0</div>
+        </div>
+        
+        <div class="flex-1 flex justify-center gap-8 text-sm">
+            <a href="#" onclick="switchTab(0)" class="tab-btn active px-5 py-2 hover:text-emerald-400 transition-colors">HOME</a>
+            <a href="#" onclick="switchTab(1)" class="tab-btn px-5 py-2 hover:text-emerald-400 transition-colors">POKÉDEX</a>
+            <a href="#" onclick="switchTab(2)" class="tab-btn px-5 py-2 hover:text-emerald-400 transition-colors">TEAM</a>
+            <a href="#" onclick="switchTab(3)" class="tab-btn px-5 py-2 hover:text-emerald-400 transition-colors">TOOLS</a>
+            <a href="#" onclick="switchTab(4)" class="tab-btn px-5 py-2 hover:text-emerald-400 transition-colors">GUIDES</a>
+        </div>
+        
+        <div class="flex items-center gap-4">
+            <div class="bg-zinc-800 text-xs px-3 py-1 rounded">Trainer: jack • NJ</div>
+            <div onclick="toggleTheme()" class="w-8 h-8 bg-zinc-700 hover:bg-zinc-600 rounded-xl flex items-center justify-center cursor-pointer">🌙</div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="flex flex-1 overflow-hidden">
+        <!-- Sidebar Navigation -->
+        <div class="w-56 bg-zinc-950 border-r border-zinc-800 p-4 flex flex-col">
+            <div class="mb-6">
+                <input id="globalSearch" 
+                       onkeyup="if(event.key==='Enter') searchGlobal()"
+                       type="text" 
+                       placeholder="SEARCH POKÉMON..." 
+                       class="w-full bg-zinc-900 border border-zinc-700 focus:border-emerald-500 rounded-xl px-4 py-3 text-sm outline-none">
+            </div>
+            
+            <div class="space-y-1 text-sm">
+                <div onclick="switchTab(1)" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-emerald-900/30 cursor-pointer">
+                    📖 <span>National Pokédex</span>
+                </div>
+                <div onclick="alert('Regional forms loaded!')" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-emerald-900/30 cursor-pointer">
+                    🌍 <span>Regional Variants</span>
+                </div>
+                <div onclick="alert('Mega & G-Max database')" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-emerald-900/30 cursor-pointer">
+                    ⭐ <span>Special Forms</span>
+                </div>
+                <div onclick="switchTab(2)" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-emerald-900/30 cursor-pointer">
+                    👥 <span>My Solo Team</span>
+                </div>
+            </div>
+            
+            <div class="mt-auto pt-6 border-t border-zinc-800 text-xs text-zinc-500">
+                <div class="flex justify-between">
+                    <span>Online</span>
+                    <span class="text-emerald-400">1,284 trainers</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Window -->
+        <div class="flex-1 p-8 overflow-auto crt" id="mainContent">
+            <!-- HOME TAB -->
+            <div id="tab-0" class="tab-content">
+                <div class="max-w-5xl mx-auto">
+                    <h1 class="pixel-font text-5xl mb-2 text-emerald-400">WELCOME TO POKÉOS</h1>
+                    <p class="text-xl text-zinc-400 mb-10">Your complete solo Pokémon companion • All forms • All regions • Built for challenge runs</p>
+                    
+                    <div class="grid grid-cols-12 gap-6">
+                        <div class="col-span-7 bg-zinc-900 border border-emerald-500/30 rounded-3xl p-8">
+                            <div class="uppercase tracking-widest text-xs mb-4 text-emerald-400">Featured Solo Run</div>
+                            <div class="flex gap-8">
+                                <div>
+                                    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png" class="w-48 drop-shadow-2xl" alt="Charizard">
+                                </div>
+                                <div class="flex-1">
+                                    <div class="text-4xl font-bold">Charizard</div>
+                                    <div class="text-emerald-400">#006 • Mega Evolution Ready</div>
+                                    <div class="mt-6 text-sm leading-relaxed">
+                                        Perfect early-game sweeper for solo Nuzlockes.<br>
+                                        Strong Fire/Flying coverage. Learn Flamethrower by level 36.
+                                    </div>
+                                    <button onclick="viewPokemon(6)" 
+                                            class="mt-8 bg-emerald-600 hover:bg-emerald-500 px-8 py-4 rounded-2xl text-sm font-medium">
+                                        OPEN ENTRY →
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-span-5 space-y-6">
+                            <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-6">
+                                <div class="text-emerald-400 text-sm mb-3">QUICK TOOLS</div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <button onclick="switchTab(1)" class="bg-zinc-800 hover:bg-zinc-700 p-4 rounded-2xl text-left">📖 Full Pokédex</button>
+                                    <button onclick="alert('Type chart loaded')" class="bg-zinc-800 hover:bg-zinc-700 p-4 rounded-2xl text-left">📊 Type Coverage</button>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gradient-to-br from-emerald-950 to-zinc-900 border border-emerald-500/30 rounded-3xl p-6 text-sm">
+                                <div class="font-medium mb-2">💡 Solo Tip</div>
+                                <p class="text-zinc-300">Always pack a Pokémon with reliable recovery and status moves. In solo runs, consistency beats raw power.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- POKEDEX TAB -->
+            <div id="tab-1" class="tab-content hidden">
+                <div class="flex justify-between items-end mb-6">
+                    <h2 class="pixel-font text-3xl">NATIONAL POKÉDEX • ALL FORMS</h2>
+                    <input id="pokedexSearch" placeholder="Filter by name or #..." 
+                           onkeyup="filterDex()" 
+                           class="bg-zinc-900 border border-zinc-700 rounded-2xl px-6 py-3 w-80 outline-none">
+                </div>
+                
+                <div id="dexGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6 pokedex-grid max-h-[calc(100vh-220px)] overflow-auto pr-4">
+                    <!-- JS populated -->
+                </div>
+            </div>
+
+            <!-- TEAM TAB -->
+            <div id="tab-2" class="tab-content hidden">
+                <h2 class="pixel-font text-3xl mb-6">SOLO TEAM BUILDER</h2>
+                <div class="grid grid-cols-6 gap-4" id="teamSlots">
+                    <!-- JS populated empty slots -->
+                </div>
+                <button onclick="addRandomToTeam()" 
+                        class="mt-8 px-8 py-4 bg-zinc-800 hover:bg-zinc-700 rounded-2xl">Add Random Pokémon</button>
+            </div>
+
+            <!-- TOOLS TAB -->
+            <div id="tab-3" class="tab-content hidden text-center py-20">
+                <div class="max-w-md mx-auto">
+                    <h2 class="pixel-font text-4xl mb-6">Tools &amp; Calculators</h2>
+                    <div class="space-y-4 text-left">
+                        <div class="bg-zinc-900 p-6 rounded-3xl">IV / EV Calculator (coming soon)</div>
+                        <div class="bg-zinc-900 p-6 rounded-3xl">Damage Calculator</div>
+                        <div class="bg-zinc-900 p-6 rounded-3xl">Nuzlocke Tracker</div>
+                        <div class="bg-zinc-900 p-6 rounded-3xl">Type Chart (Interactive)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GUIDES TAB -->
+            <div id="tab-4" class="tab-content hidden">
+                <h2 class="pixel-font text-3xl mb-8">Solo Play Guides</h2>
+                <div class="grid grid-cols-3 gap-6">
+                    <div class="bg-zinc-900 rounded-3xl p-6 cursor-pointer hover:border-emerald-500 border border-transparent" onclick="alert('Opening Kanto Solo Guide...')">
+                        <div class="text-emerald-400">GEN 1</div>
+                        <div class="text-2xl mt-2">Kanto Nuzlocke Guide</div>
+                    </div>
+                    <div class="bg-zinc-900 rounded-3xl p-6 cursor-pointer hover:border-emerald-500 border border-transparent">
+                        <div class="text-emerald-400">GEN 9</div>
+                        <div class="text-2xl mt-2">Paldea Solo Tips</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Status Bar -->
+    <div class="h-9 bg-zinc-950 border-t border-zinc-800 text-xs flex items-center px-6 text-zinc-500">
+        <div>PokéOS Solo • All data from PokeAPI • Offline capable</div>
+        <div class="ml-auto">v1.0 • April 2026</div>
+    </div>
+
+    <script>
+        // Tailwind script already included
+        let allPokemon = [];
+
+        async function loadDex() {
+            const grid = document.getElementById('dexGrid');
+            grid.innerHTML = '<div class="col-span-full py-12 text-center text-emerald-400">Loading complete Pokédex with all forms...</div>';
+            
+            try {
+                const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1500');
+                const data = await res.json();
+                
+                const promises = data.results.slice(0, 300).map(async (p) => {  // Limit for speed
+                    const detail = await fetch(p.url).then(r => r.json());
+                    return {
+                        id: detail.id,
+                        name: detail.name,
+                        sprite: detail.sprites.other['official-artwork'].front_default || detail.sprites.front_default,
+                        types: detail.types.map(t => t.type.name)
+                    };
+                });
+                
+                allPokemon = await Promise.all(promises);
+                renderDex(allPokemon);
+            } catch(e) {
+                grid.innerHTML = 'Failed to load. Check connection.';
+            }
+        }
+
+        function renderDex(list) {
+            const grid = document.getElementById('dexGrid');
+            grid.innerHTML = '';
+            
+            list.forEach(p => {
+                const card = document.createElement('div');
+                card.className = `pokemon-card bg-zinc-900 border border-zinc-700 rounded-3xl overflow-hidden cursor-pointer`;
+                card.innerHTML = `
+                    <div class="h-40 flex items-center justify-center bg-zinc-950">
+                        <img src="${p.sprite}" class="max-h-36" alt="${p.name}">
+                    </div>
+                    <div class="p-4">
+                        <div class="font-mono text-xs text-zinc-500">#${p.id.toString().padStart(3,'0')}</div>
+                        <div class="capitalize text-lg font-medium">${p.name.replace('-',' ')}</div>
+                        <div class="flex gap-2 mt-2">
+                            ${p.types.map(t => `<span class="text-[10px] px-3 py-px bg-emerald-900/60 rounded-full">${t}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+                card.onclick = () => alert(`PokéOS Entry #${p.id} ${p.name.toUpperCase()}\n\nSolo tips available in full version!`);
+                grid.appendChild(card);
+            });
+        }
+
+        function filterDex() {
+            const term = document.getElementById('pokedexSearch').value.toLowerCase();
+            const filtered = allPokemon.filter(p => p.name.includes(term) || p.id.toString().includes(term));
+            renderDex(filtered);
+        }
+
+        function switchTab(n) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            document.getElementById(`tab-${n}`).classList.remove('hidden');
+            
+            if (n === 1 && allPokemon.length === 0) loadDex();
+        }
+
+        function viewPokemon(id) {
+            alert(`Opening detailed PokéOS entry for Pokémon #${id}`);
+        }
+
+        function addRandomToTeam() {
+            const slot = document.createElement('div');
+            slot.className = "bg-zinc-900 border-2 border-dashed border-zinc-700 rounded-3xl h-52 flex items-center justify-center text-6xl";
+            slot.textContent = "❓";
+            document.getElementById('teamSlots').appendChild(slot);
+        }
+
+        function toggleTheme() {
+            alert("Theme switcher (dark / classic green) coming in v1.1");
+        }
+
+        function searchGlobal() {
+            const term = document.getElementById('globalSearch').value;
+            if (term) {
+                switchTab(1);
+                document.getElementById('pokedexSearch').value = term;
+                filterDex();
+            }
+        }
+
+        // Init
+        window.onload = () => {
+            // Create 6 team slots
+            const teamDiv = document.getElementById('teamSlots');
+            for(let i = 0; i < 6; i++) {
+                const slot = document.createElement('div');
+                slot.className = "bg-zinc-900 border border-zinc-700 rounded-3xl h-52 flex flex-col items-center justify-center text-5xl";
+                slot.innerHTML = `👤<div class="text-xs mt-4 text-zinc-500">Slot ${i+1}</div>`;
+                teamDiv.appendChild(slot);
+            }
+            
+            switchTab(0); // Start on Home
+            console.log('%cPokéOS Solo Edition loaded successfully!', 'color:#10b981; font-family:monospace');
+        };
+    </script>
+</body>
+</html>
